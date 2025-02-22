@@ -2,6 +2,8 @@
 
 A modern and user-friendly car rental management system built with PHP and MySQL. Designed and developed by Ayush Ghimire.
 
+![Car Rental System](assets/img/cars/default-car.jpg)
+
 ## About
 
 This Car Rental System is a comprehensive web application that provides an easy-to-use platform for both customers and administrators to manage car rentals efficiently. With a clean and intuitive interface, it simplifies the process of car booking and rental management.
@@ -23,6 +25,20 @@ This Car Rental System is a comprehensive web application that provides an easy-
   - Manage Bookings
   - User Management
   - Enquiries Management
+
+## Screenshots
+
+### User Interface
+- **Home Page**: Browse available cars and featured vehicles
+- **Car Listings**: View detailed car information and pricing
+- **Booking System**: Easy-to-use booking interface
+- **User Profile**: Manage personal information and booking history
+
+### Admin Interface
+- **Dashboard**: Overview of bookings, users, and revenue
+- **Car Management**: Add, edit, and manage car inventory
+- **Booking Management**: Track and manage all bookings
+- **User Management**: Manage user accounts and permissions
 
 ## Requirements
 
@@ -77,22 +93,36 @@ carrentalphp/
 └── uploads/           # Car image uploads
 ```
 
+## Tech Stack
+
+- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap
+- **Backend**: PHP 7.4+
+- **Database**: MySQL 5.7+
+- **Server**: Apache
+- **Additional Libraries**: 
+  - Font Awesome (Icons)
+  - jQuery (JavaScript Framework)
+  - Bootstrap (UI Framework)
+
 ## Security Features
 
-- Password Hashing
+- Password Hashing using PHP's `password_hash()`
 - SQL Injection Prevention
 - XSS Protection
-- Session Management
-- Input Validation
+- CSRF Protection
+- Input Validation and Sanitization
+- Secure Session Management
+
+## Support
+
+If you encounter any issues or need assistance, please:
+1. Check the [Issues](https://github.com/ayushghi4/carrentalphp/issues) page
+2. Create a new issue if your problem isn't already listed
+3. Provide detailed information about your problem
 
 ## Contributing
 
-If you'd like to contribute to this project, please feel free to:
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ## Author
 
