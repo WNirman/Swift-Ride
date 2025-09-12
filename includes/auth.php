@@ -135,4 +135,40 @@ function is_admin_logged_in()
 {
     return isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 }
+
+//Providerlogin function
+function provider_login($username, $password)
+{
+    $conn = Connect();
+
+    $stmt = $conn->prepare("SELECT provider_id, username, name, password 
+                            FROM providers WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $provider = $result->fetch_assoc();
+        if (password_verify($password, $provider['password'])) {
+            // Set session variables
+            $_SESSION['provider_id'] = $provider['provider_id'];
+            $_SESSION['username'] = $provider['username'];
+            $_SESSION['name'] = $provider['name'];
+            $_SESSION['provider_logged_in'] = true;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+// Check if provider is logged in
+function is_provider_logged_in()
+{
+    return isset($_SESSION['provider_logged_in']) && $_SESSION['provider_logged_in'] === true;
+}
+
+
+
 ?>
