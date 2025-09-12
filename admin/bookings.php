@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $booking_id = $_POST['booking_id'];
             $status = $_POST['status'];
             
-            $sql = "UPDATE bookings SET status = ? WHERE booking_id = ?";
+            $sql = "UPDATE Bookings SET status = ? WHERE booking_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('si', $status, $booking_id);
             
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Delete booking
             $booking_id = $_POST['booking_id'];
             
-            $sql = "DELETE FROM bookings WHERE booking_id = ?";
+            $sql = "DELETE FROM Bookings WHERE booking_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('i', $booking_id);
             
@@ -57,12 +57,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get all bookings with user and car details
-$sql = "SELECT b.*, u.name as user_name, u.email, c.car_name, c.car_type, c.price 
-        FROM bookings b 
-        JOIN users u ON b.user_id = u.user_id 
-        JOIN cars c ON b.car_id = c.car_id 
-        ORDER BY b.booking_date DESC";
+// ✅ Fixed query to use Vehicles + Users schema
+$sql = "
+    SELECT b.*, 
+           u.name AS user_name,
+           u.email AS user_email,
+           v.vehicle_type,
+           CONCAT(v.vehicle_brand, ' ', v.vehicle_model) AS vehicle_name,
+           v.price
+    FROM Bookings b
+    LEFT JOIN Users u ON b.user_id = u.user_id
+    LEFT JOIN Vehicles v ON b.vehicle_id = v.vehicle_id
+    ORDER BY b.booking_date DESC
+";
 $result = $conn->query($sql);
 
 include 'includes/header.php';
@@ -122,7 +129,7 @@ include 'includes/header.php';
                             <tr>
                                 <th class="ps-4">Booking ID</th>
                                 <th>User</th>
-                                <th>Car</th>
+                                <th>Vehicle</th>
                                 <th>From Date</th>
                                 <th>To Date</th>
                                 <th>Total Cost</th>
@@ -138,20 +145,20 @@ include 'includes/header.php';
                                         <td>
                                             <div class="d-flex flex-column">
                                                 <span class="fw-bold"><?php echo htmlspecialchars($booking['user_name']); ?></span>
-                                                <small class="text-muted"><?php echo htmlspecialchars($booking['email']); ?></small>
+                                                <small class="text-muted"><?php echo htmlspecialchars($booking['user_email'] ?? ''); ?></small>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex flex-column">
-                                                <span class="fw-bold"><?php echo htmlspecialchars($booking['car_name']); ?></span>
-                                                <small class="text-muted"><?php echo htmlspecialchars($booking['car_type']); ?></small>
+                                                <span class="fw-bold"><?php echo htmlspecialchars($booking['vehicle_name'] ?? ''); ?></span>
+                                                <small class="text-muted"><?php echo htmlspecialchars($booking['vehicle_type'] ?? ''); ?></small>
                                             </div>
                                         </td>
                                         <td><?php echo date('M d, Y', strtotime($booking['pickup_date'])); ?></td>
                                         <td><?php echo date('M d, Y', strtotime($booking['return_date'])); ?></td>
                                         <td>Rs. <?php 
                                             $total = calculate_rental_cost(
-                                                $booking['price'], 
+                                                $booking['price'] ?? 0, 
                                                 $booking['pickup_date'], 
                                                 $booking['return_date']
                                             );
@@ -230,7 +237,7 @@ include 'includes/header.php';
                                                             <p>Are you sure you want to delete this booking?</p>
                                                             <p class="mb-0"><strong>Booking ID:</strong> #<?php echo $booking['booking_id']; ?></p>
                                                             <p class="mb-0"><strong>User:</strong> <?php echo htmlspecialchars($booking['user_name']); ?></p>
-                                                            <p class="mb-0"><strong>Car:</strong> <?php echo htmlspecialchars($booking['car_name']); ?></p>
+                                                            <p class="mb-0"><strong>Vehicle:</strong> <?php echo htmlspecialchars($booking['vehicle_name'] ?? ''); ?></p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
