@@ -15,29 +15,22 @@ $conn = Connect();
 
 // Set current page for nav highlighting
 $current_page = 'dashboard';
-$page_title = 'Dashboard';
+$page_title = 'Vehicle Rental Admin'; // UPDATED: Page title changed from Car Rental Admin
 
 // Initialize counts
-$cars_count = 0;
 $bookings_count = 0;
 $users_count = 0;
 $enquiries_count = 0;
+$vehicle_types_count = 0; // Count for vehicles
+$providers_count = 0;     // Count for providers
 
 // Get counts using try-catch to handle potential errors
 try {
-    // Check if tables exist before querying
+    // Get all tables in the database
     $tables_result = $conn->query("SHOW TABLES");
     $tables = array();
     while ($table = $tables_result->fetch_row()) {
         $tables[] = $table[0];
-    }
-
-    // Cars count
-    if (in_array('cars', $tables)) {
-        $cars_result = $conn->query("SELECT COUNT(*) as total FROM cars");
-        if ($cars_result) {
-            $cars_count = $cars_result->fetch_assoc()['total'];
-        }
     }
 
     // Bookings count
@@ -56,9 +49,8 @@ try {
         }
     }
 
-    // Recent enquiries count
+    // Recent enquiries count (last 30 days)
     if (in_array('enquiries', $tables)) {
-        // Check if created_at column exists
         $columns_result = $conn->query("SHOW COLUMNS FROM enquiries LIKE 'created_at'");
         if ($columns_result->num_rows > 0) {
             $enquiries_result = $conn->query("SELECT COUNT(*) as total FROM enquiries WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)");
@@ -69,6 +61,23 @@ try {
             $enquiries_count = $enquiries_result->fetch_assoc()['total'];
         }
     }
+
+    $vehicle_types_count = 0;
+    $veh_result = $conn->query("SELECT COUNT(DISTINCT vehicle_type) as total FROM Vehicles");
+    if ($veh_result) {
+        $vehicle_types_count = $veh_result->fetch_assoc()['total'];
+    }
+
+    
+
+    // Providers count
+    if (in_array('providers', $tables)) {
+        $pr_result = $conn->query("SELECT COUNT(*) as total FROM providers");
+        if ($pr_result) {
+            $providers_count = $pr_result->fetch_assoc()['total'];
+        }
+    }
+
 } catch (Exception $e) {
     error_log("Error in dashboard counts: " . $e->getMessage());
 }
@@ -83,23 +92,46 @@ include 'includes/header.php';
     
     <!-- Stats Cards -->
     <div class="row g-4 mb-4">
-        <!-- Total Cars -->
+
+        <!-- Total Vehicles -->
         <div class="col-sm-6 col-xl-3">
             <div class="stat-card h-100">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
                         <span class="stat-icon">
-                            <i class="fas fa-car fa-2x text-primary"></i>
+                            <i class="fas fa-list fa-2x text-secondary"></i>
                         </span>
                     </div>
                     <div class="flex-grow-1 ms-3">
-                        <h3 class="h6 mb-2">Total Cars</h3>
-                        <div class="count"><?php echo $cars_count; ?></div>
-                        <p class="text-muted small mb-0">Available for Rent</p>
+                        <h3 class="h6 mb-2">Total Vehicles</h3>
+                        <div class="count"><?php echo $vehicle_types_count; ?></div>
+                        <p class="text-muted small mb-0">Defined Types</p>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <a href="cars.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="vehicle_types.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Providers -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card h-100">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <span class="stat-icon">
+                            <i class="fas fa-warehouse fa-2x text-dark"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="h6 mb-2">Providers</h3>
+                        <div class="count"><?php echo $providers_count; ?></div>
+                        <p class="text-muted small mb-0">Registered</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                   <a href="../providers.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+
                 </div>
             </div>
         </div>
@@ -168,14 +200,14 @@ include 'includes/header.php';
         </div>
     </div>
 
-    <!-- Recent Data -->
+    <!-- Recent Data Tables -->
     <div class="row g-4">
-        <!-- Recent Bookings -->
+        <!-- Recently Added Bookings -->
         <div class="col-lg-6">
             <div class="card h-100">
                 <div class="card-header bg-white py-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recent Bookings</h5>
+                        <h5 class="mb-0">Recently Added Bookings</h5>
                         <a href="bookings.php" class="btn btn-sm btn-primary">View All</a>
                     </div>
                 </div>
@@ -183,50 +215,40 @@ include 'includes/header.php';
                     <?php
                     try {
                         if (in_array('bookings', $tables)) {
-                            // Check required columns
-                            $bookings_cols = $conn->query("SHOW COLUMNS FROM bookings");
-                            $booking_columns = array();
-                            while ($col = $bookings_cols->fetch_assoc()) {
-                                $booking_columns[] = $col['Field'];
+                            $bk_cols = $conn->query("SHOW COLUMNS FROM bookings");
+                            $bk_columns = array();
+                            while ($col = $bk_cols->fetch_assoc()) {
+                                $bk_columns[] = $col['Field'];
                             }
 
-                            $order_by = in_array('created_at', $booking_columns) ? 'created_at' : 'booking_id';
-                            $amount_field = in_array('total_amount', $booking_columns) ? 'total_amount' : 'amount';
+                            $order_by = in_array('created_at', $bk_columns) ? 'created_at' : 'id';
 
                             $recent_bookings = $conn->query("
-                                SELECT b.*, u.name as customer_name, c.car_name 
+                                SELECT b.*, u.username 
                                 FROM bookings b 
-                                JOIN users u ON b.user_id = u.user_id 
-                                JOIN cars c ON b.car_id = c.car_id 
-                                ORDER BY b.$order_by DESC 
+                                LEFT JOIN users u ON b.user_id = u.user_id 
+                                ORDER BY $order_by DESC 
                                 LIMIT 5
                             ");
-                            
+
                             if ($recent_bookings && $recent_bookings->num_rows > 0) {
                                 echo '<div class="table-responsive">';
                                 echo '<table class="table table-hover mb-0">';
                                 echo '<thead class="table-light">';
                                 echo '<tr>';
-                                echo '<th class="border-0">Customer</th>';
-                                echo '<th class="border-0">Car</th>';
-                                echo '<th class="border-0">Amount</th>';
-                                echo '<th class="border-0">Status</th>';
+                                echo '<th class="border-0">Booking ID</th>';
+                                echo '<th class="border-0">User</th>';
+                                echo '<th class="border-0">Vehicle</th>';
+                                echo '<th class="border-0">Date</th>';
                                 echo '</tr>';
                                 echo '</thead>';
                                 echo '<tbody>';
                                 while ($booking = $recent_bookings->fetch_assoc()) {
-                                    // Default to 'pending' if status is not set
-                                    $status = $booking['status'] ?? 'pending';
-                                    $status_class = match(strtolower($status)) {
-                                        'confirmed' => 'success',
-                                        'cancelled' => 'danger',
-                                        default => 'warning'
-                                    };
                                     echo '<tr>';
-                                    echo '<td>' . htmlspecialchars($booking['customer_name']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($booking['car_name']) . '</td>';
-                                    echo '<td>Rs. ' . number_format($booking['total_amount'] ?? 0, 2) . '</td>';
-                                    echo '<td><span class="badge bg-' . $status_class . '">' . ucfirst($status) . '</span></td>';
+                                    echo '<td>' . htmlspecialchars($booking['booking_id']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($booking['username'] ?? '-') . '</td>';
+                                    echo '<td>' . htmlspecialchars($booking['vehicle_name'] ?? '-') . '</td>';
+                                    echo '<td>' . htmlspecialchars($booking['created_at'] ?? '-') . '</td>';
                                     echo '</tr>';
                                 }
                                 echo '</tbody>';
@@ -234,7 +256,7 @@ include 'includes/header.php';
                                 echo '</div>';
                             } else {
                                 echo '<div class="text-center py-4">';
-                                echo '<p class="text-muted mb-0">No recent bookings</p>';
+                                echo '<p class="text-muted mb-0">No bookings added yet</p>';
                                 echo '</div>';
                             }
                         } else {
@@ -244,66 +266,45 @@ include 'includes/header.php';
                         }
                     } catch (Exception $e) {
                         echo '<div class="text-center py-4">';
-                        echo '<p class="text-danger mb-0">Error loading recent bookings</p>';
+                        echo '<p class="text-danger mb-0">Error loading bookings</p>';
                         echo '</div>';
-                        error_log("Error loading recent bookings: " . $e->getMessage());
+                        error_log("Error loading bookings: " . $e->getMessage());
                     }
                     ?>
                 </div>
             </div>
         </div>
 
-        <!-- Recently Added Cars -->
+        <!-- Recently Added Providers -->
         <div class="col-lg-6">
             <div class="card h-100">
                 <div class="card-header bg-white py-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recently Added Cars</h5>
-                        <a href="cars.php" class="btn btn-sm btn-primary">View All</a>
+                        <h5 class="mb-0">Recently Added Providers</h5>
+                        <a href="providers.php" class="btn btn-sm btn-primary">View All</a>
                     </div>
                 </div>
                 <div class="card-body p-0">
                     <?php
                     try {
-                        if (in_array('cars', $tables)) {
-                            // Check required columns
-                            $cars_cols = $conn->query("SHOW COLUMNS FROM cars");
-                            $car_columns = array();
-                            while ($col = $cars_cols->fetch_assoc()) {
-                                $car_columns[] = $col['Field'];
-                            }
-
-                            $order_by = in_array('created_at', $car_columns) ? 'created_at' : 'car_id';
-                            $price_field = in_array('price_per_day', $car_columns) ? 'price_per_day' : 'price';
-
-                            $recent_cars = $conn->query("
-                                SELECT * FROM cars 
-                                ORDER BY $order_by DESC 
-                                LIMIT 5
-                            ");
-                            
-                            if ($recent_cars && $recent_cars->num_rows > 0) {
+                        if (in_array('providers', $tables)) {
+                            $recent_providers = $conn->query("SELECT * FROM providers ORDER BY created_at DESC LIMIT 5");
+                            if ($recent_providers && $recent_providers->num_rows > 0) {
                                 echo '<div class="table-responsive">';
                                 echo '<table class="table table-hover mb-0">';
                                 echo '<thead class="table-light">';
                                 echo '<tr>';
-                                echo '<th class="border-0">Car</th>';
-                                echo '<th class="border-0">Type</th>';
-                                echo '<th class="border-0">Price/Day</th>';
-                                echo '<th class="border-0">Status</th>';
+                                echo '<th class="border-0">Name</th>';
+                                echo '<th class="border-0">Email</th>';
+                                echo '<th class="border-0">Phone</th>';
                                 echo '</tr>';
                                 echo '</thead>';
                                 echo '<tbody>';
-                                while ($car = $recent_cars->fetch_assoc()) {
-                                    // Default to 'unavailable' if status is not set
-                                    $status = $car['status'] ?? 'unavailable';
-                                    $status_class = $status === 'available' ? 'success' : 'warning';
-                                    
+                                while ($row = $recent_providers->fetch_assoc()) {
                                     echo '<tr>';
-                                    echo '<td>' . htmlspecialchars($car['car_name']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($car['car_type']) . '</td>';
-                                    echo '<td>Rs. ' . number_format($car['price_per_day'] ?? 0, 2) . '</td>';
-                                    echo '<td><span class="badge bg-' . $status_class . '">' . ucfirst($status) . '</span></td>';
+                                    echo '<td>' . htmlspecialchars($row['name']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['email'] ?? '-') . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['phone'] ?? '-') . '</td>';
                                     echo '</tr>';
                                 }
                                 echo '</tbody>';
@@ -311,19 +312,15 @@ include 'includes/header.php';
                                 echo '</div>';
                             } else {
                                 echo '<div class="text-center py-4">';
-                                echo '<p class="text-muted mb-0">No cars added yet</p>';
+                                echo '<p class="text-muted mb-0">No providers added yet</p>';
                                 echo '</div>';
                             }
-                        } else {
-                            echo '<div class="text-center py-4">';
-                            echo '<p class="text-muted mb-0">Cars table not found</p>';
-                            echo '</div>';
                         }
                     } catch (Exception $e) {
                         echo '<div class="text-center py-4">';
-                        echo '<p class="text-danger mb-0">Error loading recent cars</p>';
+                        echo '<p class="text-danger mb-0">Error loading providers</p>';
                         echo '</div>';
-                        error_log("Error loading recent cars: " . $e->getMessage());
+                        error_log("Error loading providers: " . $e->getMessage());
                     }
                     ?>
                 </div>

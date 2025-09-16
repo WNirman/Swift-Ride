@@ -64,6 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="text-center mt-3">
                             <p>Don't have an account? <a href="register.php">Register here</a></p>
                             <p>Are you an admin? <a href="admin/login.php">Admin Login</a></p>
+                            <p>Are you a provider? <a href="provider/provider_login.php">Provider Login</a></p>
+
                             <p><a href="index.php">Back to Home</a></p>
                         </div>
                     </div>

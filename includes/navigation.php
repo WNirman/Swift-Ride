@@ -5,7 +5,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand" href="index.php">
-            <i class="fas fa-car-side me-2"></i>Car Rental
+            <i class="fas fa-car-side me-2"></i>Vehicle Rental
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -19,7 +19,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $current_page === 'cars.php' ? 'active' : ''; ?>" href="cars.php">
-                        <i class="fas fa-car me-1"></i>Cars
+                        <i class="fas fa-car me-1"></i>Vehicles
                     </a>
                 </li>
                 <?php if (is_user_logged_in()): ?>
