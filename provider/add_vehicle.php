@@ -11,58 +11,53 @@ if (!is_provider_logged_in()) {
 
 $provider_id = $_SESSION['provider_id'];
 $conn = Connect();
-$success = $error = '';
+$error = '';
 
-// Handle form submission
+// Handle form submission for adding vehicle
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $model = $conn->real_escape_string($_POST['vehicle_model']);
     $type = $conn->real_escape_string($_POST['vehicle_type']);
     $price = floatval($_POST['price']);
     $availability = $_POST['availability'];
 
-    // Validate location selection
     if (isset($_POST['location_id']) && !empty($_POST['location_id'])) {
         $location_id = intval($_POST['location_id']);
     } else {
         $error = "Please select a vehicle location.";
     }
 
-    // Proceed only if no errors
     if (!$error) {
-// --- image upload + normalize path ---
-$image_path = null;
-if (isset($_FILES['vehicle_image']) && $_FILES['vehicle_image']['error'] === UPLOAD_ERR_OK) {
-    $fileTmpPath = $_FILES['vehicle_image']['tmp_name'];
-    $fileName = $_FILES['vehicle_image']['name'];
-    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-    $newFileName = uniqid('', true) . '.' . $fileExt;
+        // Image upload
+        $image_path = null;
+        if (isset($_FILES['vehicle_image']) && $_FILES['vehicle_image']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['vehicle_image']['tmp_name'];
+            $fileName = $_FILES['vehicle_image']['name'];
+            $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $newFileName = uniqid('', true) . '.' . $fileExt;
 
-    // physical upload directory on server
-    $uploadDir = __DIR__ . '/../uploads/vehicles/'; // physical path
-    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            $uploadDir = __DIR__ . '/../uploads/vehicles/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
 
-    $destPath = $uploadDir . $newFileName;
+            $destPath = $uploadDir . $newFileName;
+            if (move_uploaded_file($fileTmpPath, $destPath)) {
+                $image_path = 'uploads/vehicles/' . $newFileName;
+            } else {
+                $error = "Failed to move uploaded file.";
+            }
+        }
 
-    if (move_uploaded_file($fileTmpPath, $destPath)) {
-        // Save **web relative** path in DB (forward slashes)
-        $image_path = 'uploads/vehicles/' . $newFileName;
-    } else {
-        $error = "Failed to move uploaded file.";
-    }
-}
-
-// Insert vehicle into database (use $image_path)
-$stmt = $conn->prepare("
-    INSERT INTO Vehicles 
-    (provider_id, location_id, vehicle_model, vehicle_type, price, vehicle_availability, vehicle_image)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-");
-$stmt->bind_param("iissdss", $provider_id, $location_id, $model, $type, $price, $availability, $image_path);
-
-
+        // Insert into DB
+        $stmt = $conn->prepare("
+            INSERT INTO Vehicles 
+            (provider_id, location_id, vehicle_model, vehicle_type, price, vehicle_availability, vehicle_image)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param("iissdss", $provider_id, $location_id, $model, $type, $price, $availability, $image_path);
 
         if ($stmt->execute()) {
-            $success = "Vehicle added successfully!";
+            // ✅ Redirect back to dashboard with success message
+            header("Location: dashboard.php?msg=Vehicle+added+successfully");
+            exit;
         } else {
             $error = "Error adding vehicle: " . $conn->error;
         }
@@ -71,6 +66,13 @@ $stmt->bind_param("iissdss", $provider_id, $location_id, $model, $type, $price, 
 
 // Fetch Locations for dropdown
 $locations = $conn->query("SELECT location_id, city, branch FROM Locations ORDER BY city ASC");
+
+// Fetch vehicles added by this provider
+$vehicles = $conn->query("SELECT v.*, l.city, l.branch 
+                          FROM Vehicles v 
+                          LEFT JOIN Locations l ON v.location_id = l.location_id
+                          WHERE v.provider_id = $provider_id
+                          ORDER BY v.vehicle_id DESC");
 ?>
 
 <!DOCTYPE html>
@@ -85,13 +87,13 @@ $locations = $conn->query("SELECT location_id, city, branch FROM Locations ORDER
 <body>
     <?php include __DIR__ . '/../includes/provider_navbar.php'; ?>
 
-    <div class="container main-content">
+    <div class="container main-content mt-4">
         <h3 class="mb-4">Add New Vehicle</h3>
 
-        <?php if ($success) echo "<div class='alert alert-success'>$success</div>"; ?>
         <?php if ($error) echo "<div class='alert alert-danger'>$error</div>"; ?>
 
-        <div class="card p-4">
+        <!-- Add Vehicle Form -->
+        <div class="card p-4 mb-3">
             <form method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="vehicle_model" class="form-label">Vehicle Model</label>
@@ -139,9 +141,48 @@ $locations = $conn->query("SELECT location_id, city, branch FROM Locations ORDER
                 </div>
 
                 <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Vehicle</button>
-                <a href="dashboard.php" class="btn btn-secondary">Cancel</a>
+                <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
             </form>
         </div>
+
+        <!-- Vehicle List -->
+        <h4>Your Vehicles</h4>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Model</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Price</th>
+                    <th>Availability</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while($v = $vehicles->fetch_assoc()): ?>
+                <tr>
+                    <td>
+                        <?php if($v['vehicle_image']): ?>
+                            <img src="../<?= $v['vehicle_image'] ?>" width="100">
+                        <?php endif; ?>
+                    </td>
+                    <td><?= $v['vehicle_model'] ?></td>
+                    <td><?= $v['vehicle_type'] ?></td>
+                    <td><?= $v['city'] ?> - <?= $v['branch'] ?></td>
+                    <td>$<?= number_format($v['price'], 2) ?></td>
+                    <td><?= ucfirst($v['vehicle_availability']) ?></td>
+                    <td>
+                        <a href="edit_vehicle.php?id=<?= $v['vehicle_id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="delete_vehicle.php?id=<?= $v['vehicle_id'] ?>" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete <?= $v['vehicle_model'] ?>?');">
+                           Delete
+                        </a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
