@@ -4,60 +4,55 @@ require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/functions.php';
 
-// Check if user is logged in and is admin
+// ✅ Check if user is logged in and is admin
 if (!is_admin_logged_in()) {
     header('Location: ../login.php');
     exit;
 }
 
-// Get database connection
-$conn = Connect();
+// ✅ Get database connection (PDO)
+$conn = ConnectPDO(); // 👉 Make sure in config.php you have a ConnectPDO() function returning a PDO object
 
 // Set current page for nav highlighting
 $current_page = 'bookings';
 $page_title = 'Manage Bookings';
 
-// Handle booking status updates and deletions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['booking_id'])) {
-        if (isset($_POST['status'])) {
-            // Update booking status
-            $booking_id = $_POST['booking_id'];
-            $status = $_POST['status'];
-            
-            $sql = "UPDATE Bookings SET status = ? WHERE booking_id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('si', $status, $booking_id);
-            
-            if ($stmt->execute()) {
-                $_SESSION['success'] = "Booking status updated successfully.";
-            } else {
-                $_SESSION['error'] = "Failed to update booking status.";
-            }
-            
-            $stmt->close();
-        } elseif (isset($_POST['delete_booking'])) {
-            // Delete booking
-            $booking_id = $_POST['booking_id'];
-            
-            $sql = "DELETE FROM Bookings WHERE booking_id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('i', $booking_id);
-            
-            if ($stmt->execute()) {
-                $_SESSION['success'] = "Booking deleted successfully.";
-            } else {
-                $_SESSION['error'] = "Failed to delete booking.";
-            }
-            
-            $stmt->close();
+// ✅ Handle booking status updates and deletions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['booking_id'])) {
+    $booking_id = intval($_POST['booking_id']);
+
+    if (isset($_POST['status'])) {
+        // Update booking status
+        $status = $_POST['status'];
+
+        $sql = "UPDATE bookings SET status = :status WHERE booking_id = :booking_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->bindParam(':booking_id', $booking_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $_SESSION['success'] = "Booking status updated successfully.";
+        } else {
+            $_SESSION['error'] = "Failed to update booking status.";
         }
-        header('Location: bookings.php');
-        exit;
+    } elseif (isset($_POST['delete_booking'])) {
+        // Delete booking
+        $sql = "DELETE FROM bookings WHERE booking_id = :booking_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':booking_id', $booking_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $_SESSION['success'] = "Booking deleted successfully.";
+        } else {
+            $_SESSION['error'] = "Failed to delete booking.";
+        }
     }
+
+    header('Location: bookings.php');
+    exit;
 }
 
-// ✅ Fixed query to use Vehicles + Users schema
+// ✅ Query bookings with joins
 $sql = "
     SELECT b.*, 
            u.name AS user_name,
@@ -65,12 +60,13 @@ $sql = "
            v.vehicle_type,
            CONCAT(v.vehicle_brand, ' ', v.vehicle_model) AS vehicle_name,
            v.price
-    FROM Bookings b
-    LEFT JOIN Users u ON b.user_id = u.user_id
-    LEFT JOIN Vehicles v ON b.vehicle_id = v.vehicle_id
+    FROM bookings b
+    LEFT JOIN users u ON b.user_id = u.user_id
+    LEFT JOIN vehicles v ON b.vehicle_id = v.vehicle_id
     ORDER BY b.booking_date DESC
 ";
-$result = $conn->query($sql);
+$stmt = $conn->query($sql);
+$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include 'includes/header.php';
 ?>
@@ -88,20 +84,14 @@ include 'includes/header.php';
 
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?php 
-                echo $_SESSION['success'];
-                unset($_SESSION['success']);
-                ?>
+                <?= $_SESSION['success']; unset($_SESSION['success']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?php 
-                echo $_SESSION['error'];
-                unset($_SESSION['error']);
-                ?>
+                <?= $_SESSION['error']; unset($_SESSION['error']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
@@ -138,34 +128,37 @@ include 'includes/header.php';
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if ($result && $result->num_rows > 0): ?>
-                                <?php while ($booking = $result->fetch_assoc()): ?>
+                            <?php if ($bookings): ?>
+                                <?php foreach ($bookings as $booking): ?>
                                     <tr>
-                                        <td class="ps-4">#<?php echo $booking['booking_id']; ?></td>
+                                        <td class="ps-4">#<?= $booking['booking_id']; ?></td>
                                         <td>
                                             <div class="d-flex flex-column">
-                                                <span class="fw-bold"><?php echo htmlspecialchars($booking['user_name']); ?></span>
-                                                <small class="text-muted"><?php echo htmlspecialchars($booking['user_email'] ?? ''); ?></small>
+                                                <span class="fw-bold"><?= htmlspecialchars($booking['user_name']); ?></span>
+                                                <small class="text-muted"><?= htmlspecialchars($booking['user_email'] ?? ''); ?></small>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex flex-column">
-                                                <span class="fw-bold"><?php echo htmlspecialchars($booking['vehicle_name'] ?? ''); ?></span>
-                                                <small class="text-muted"><?php echo htmlspecialchars($booking['vehicle_type'] ?? ''); ?></small>
+                                                <span class="fw-bold"><?= htmlspecialchars($booking['vehicle_name'] ?? ''); ?></span>
+                                                <small class="text-muted"><?= htmlspecialchars($booking['vehicle_type'] ?? ''); ?></small>
                                             </div>
                                         </td>
-                                        <td><?php echo date('M d, Y', strtotime($booking['pickup_date'])); ?></td>
-                                        <td><?php echo date('M d, Y', strtotime($booking['return_date'])); ?></td>
-                                        <td>Rs. <?php 
+                                        <td><?= date('M d, Y', strtotime($booking['pickup_date'])); ?></td>
+                                        <td><?= date('M d, Y', strtotime($booking['return_date'])); ?></td>
+                                        <td>Rs. 
+                                            <?php 
                                             $total = calculate_rental_cost(
                                                 $booking['price'] ?? 0, 
                                                 $booking['pickup_date'], 
                                                 $booking['return_date']
                                             );
                                             echo number_format($total, 2); 
-                                        ?></td>
+                                            ?>
+                                        </td>
                                         <td>
-                                            <span class="badge <?php 
+                                            <span class="badge 
+                                                <?php 
                                                 echo match($booking['status']) {
                                                     'pending' => 'bg-warning',
                                                     'confirmed' => 'bg-success',
@@ -173,7 +166,9 @@ include 'includes/header.php';
                                                     'completed' => 'bg-info',
                                                     default => 'bg-secondary'
                                                 };
-                                            ?>"><?php echo ucfirst($booking['status']); ?></span>
+                                                ?>">
+                                                <?= ucfirst($booking['status']); ?>
+                                            </span>
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="btn-group">
@@ -182,51 +177,26 @@ include 'includes/header.php';
                                                         <i class="fas fa-edit me-1"></i>Status
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li>
-                                                            <form method="POST" class="dropdown-item d-flex align-items-center">
-                                                                <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
-                                                                <input type="hidden" name="status" value="pending">
-                                                                <button type="submit" class="btn btn-link text-warning p-0 text-decoration-none">
-                                                                    <i class="fas fa-clock me-2"></i>Pending
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                        <li>
-                                                            <form method="POST" class="dropdown-item d-flex align-items-center">
-                                                                <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
-                                                                <input type="hidden" name="status" value="confirmed">
-                                                                <button type="submit" class="btn btn-link text-success p-0 text-decoration-none">
-                                                                    <i class="fas fa-check me-2"></i>Confirm
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                        <li>
-                                                            <form method="POST" class="dropdown-item d-flex align-items-center">
-                                                                <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
-                                                                <input type="hidden" name="status" value="cancelled">
-                                                                <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none">
-                                                                    <i class="fas fa-ban me-2"></i>Cancel
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                        <li>
-                                                            <form method="POST" class="dropdown-item d-flex align-items-center">
-                                                                <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
-                                                                <input type="hidden" name="status" value="completed">
-                                                                <button type="submit" class="btn btn-link text-info p-0 text-decoration-none">
-                                                                    <i class="fas fa-flag-checkered me-2"></i>Complete
-                                                                </button>
-                                                            </form>
-                                                        </li>
+                                                        <?php foreach (['pending'=>'clock','confirmed'=>'check','cancelled'=>'ban','completed'=>'flag-checkered'] as $status => $icon): ?>
+                                                            <li>
+                                                                <form method="POST" class="dropdown-item d-flex align-items-center">
+                                                                    <input type="hidden" name="booking_id" value="<?= $booking['booking_id']; ?>">
+                                                                    <input type="hidden" name="status" value="<?= $status; ?>">
+                                                                    <button type="submit" class="btn btn-link p-0 text-decoration-none text-<?= $status === 'pending' ? 'warning' : ($status === 'confirmed' ? 'success' : ($status === 'cancelled' ? 'danger' : 'info')) ?>">
+                                                                        <i class="fas fa-<?= $icon; ?> me-2"></i><?= ucfirst($status); ?>
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        <?php endforeach; ?>
                                                     </ul>
                                                 </div>
-                                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteBookingModal<?php echo $booking['booking_id']; ?>">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteBookingModal<?= $booking['booking_id']; ?>">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
 
                                             <!-- Delete Booking Modal -->
-                                            <div class="modal fade" id="deleteBookingModal<?php echo $booking['booking_id']; ?>" tabindex="-1">
+                                            <div class="modal fade" id="deleteBookingModal<?= $booking['booking_id']; ?>" tabindex="-1">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -235,14 +205,14 @@ include 'includes/header.php';
                                                         </div>
                                                         <div class="modal-body text-start">
                                                             <p>Are you sure you want to delete this booking?</p>
-                                                            <p class="mb-0"><strong>Booking ID:</strong> #<?php echo $booking['booking_id']; ?></p>
-                                                            <p class="mb-0"><strong>User:</strong> <?php echo htmlspecialchars($booking['user_name']); ?></p>
-                                                            <p class="mb-0"><strong>Vehicle:</strong> <?php echo htmlspecialchars($booking['vehicle_name'] ?? ''); ?></p>
+                                                            <p class="mb-0"><strong>Booking ID:</strong> #<?= $booking['booking_id']; ?></p>
+                                                            <p class="mb-0"><strong>User:</strong> <?= htmlspecialchars($booking['user_name']); ?></p>
+                                                            <p class="mb-0"><strong>Vehicle:</strong> <?= htmlspecialchars($booking['vehicle_name'] ?? ''); ?></p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                             <form method="POST" class="d-inline">
-                                                                <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
+                                                                <input type="hidden" name="booking_id" value="<?= $booking['booking_id']; ?>">
                                                                 <input type="hidden" name="delete_booking" value="1">
                                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                                             </form>
@@ -252,7 +222,7 @@ include 'includes/header.php';
                                             </div>
                                         </td>
                                     </tr>
-                                <?php endwhile; ?>
+                                <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="8" class="text-center py-4">No bookings found.</td>
@@ -268,7 +238,6 @@ include 'includes/header.php';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Search functionality
     const searchInput = document.getElementById('searchBookings');
     if (searchInput) {
         searchInput.addEventListener('keyup', function() {
@@ -285,6 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php 
-$conn->close();
+$conn = null; // ✅ Close PDO connection
 include 'includes/footer.php'; 
 ?>

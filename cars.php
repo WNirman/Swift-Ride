@@ -33,7 +33,7 @@ $result = $conn->query($sql);
                 <div class="col">
                     <div class="card h-100 shadow-sm">
                         <?php
-                        $img = !empty($vehicle['vehicle_image']) ? 'uploads/vehicles/' . $vehicle['vehicle_image'] : 'assets/img/cars/default.jpg';
+                        $img = !empty($vehicle['vehicle_image']) ? 'uploads/vehicles/' . $vehicle['vehicle_image'] : 'assets/img/cars/67b989256e7a3.jpg';
                         ?>
                         <img src="<?php echo htmlspecialchars($img); ?>" class="vehicle-img-top" alt="<?php echo htmlspecialchars($vehicle['vehicle_brand'].' '.$vehicle['vehicle_model']); ?>">
 
@@ -55,7 +55,7 @@ $result = $conn->query($sql);
                                 Rs. <?php echo number_format($vehicle['price'],2); ?> <small class="text-muted">/ day</small>
                             </div>
                             <?php if (is_user_logged_in()): ?>
-                                <a href="book.php?vehicle_id=<?php echo $vehicle['vehicle_id']; ?>" class="btn btn-primary w-100">
+                                <a href="my_bookings.php?vehicle_id=<?php echo $vehicle['vehicle_id']; ?>" class="btn btn-primary w-100">
                                     <i class="fas fa-calendar-check me-2"></i>Book Now
                                 </a>
                             <?php else: ?>

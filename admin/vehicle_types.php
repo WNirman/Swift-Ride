@@ -34,7 +34,7 @@ include 'includes/header.php';
                         <div class="card-body text-center">
                             <h5 class="card-title"><?php echo htmlspecialchars($row['vehicle_type']); ?></h5>
                             <p class="text-muted mb-2">Models: <?php echo $row['total_models']; ?></p>
-                            <a href="vehicles.php?type=<?php echo urlencode($row['vehicle_type']); ?>" 
+                            <a href="view_vehicles.php?type=<?php echo urlencode($row['vehicle_type']); ?>" 
                                class="btn btn-sm btn-primary">
                                 View Vehicles
                             </a>

@@ -1,125 +1,124 @@
 <?php
+// booking.php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once 'includes/auth.php';
 require_once 'includes/functions.php';
 
-// Check if user is logged in
 if (!is_user_logged_in()) {
     header('Location: login.php');
     exit();
 }
 
 $conn = Connect();
-$user_id = $_SESSION['user_id'];
+if (!$conn) {
+    die('Database connection failed.');
+}
 
-// Get user's bookings
-$sql = "SELECT b.*, c.car_name, c.car_image, c.car_type, c.price 
-        FROM bookings b 
-        JOIN cars c ON b.car_id = c.car_id 
-        WHERE b.user_id = ? 
-        ORDER BY b.booking_date DESC";
-        
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$bookings = $stmt->get_result();
+$user_id = intval($_SESSION['user_id']);
+$message = "";
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $vehicle_id = intval($_POST['vehicle_id']);
+    $pickup_date = $_POST['pickup_date'];
+    $return_date = $_POST['return_date'];
+    $pickup_location = $_POST['pickup_location'];
+    $dropoff_location = $_POST['dropoff_location'];
+
+    // Get vehicle price
+    $stmt = $conn->prepare("SELECT price FROM vehicles WHERE vehicle_id=?");
+    $stmt->bind_param("i", $vehicle_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $vehicle = $result->fetch_assoc();
+    $stmt->close();
+
+    if ($vehicle) {
+        $price_per_day = $vehicle['price'];
+        $days = (strtotime($return_date) - strtotime($pickup_date)) / 86400;
+        if ($days < 1) $days = 1;
+        $total_amount = $days * $price_per_day;
+
+        // Insert booking
+        $stmt = $conn->prepare("INSERT INTO bookings 
+            (user_id, vehicle_id, pickup_date, return_date, pickup_location, dropoff_location, total_amount, status, booking_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+        $stmt->bind_param("iissssd", $user_id, $vehicle_id, $pickup_date, $return_date, $pickup_location, $dropoff_location, $total_amount);
+
+        if ($stmt->execute()) {
+            $message = "<div class='alert alert-success'>Booking request submitted successfully!</div>";
+        } else {
+            $message = "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
+        }
+        $stmt->close();
+    }
+}
+
+// Load all vehicles to show in the select menu
+$vehicles = [];
+$res = $conn->query("SELECT vehicle_id, vehicle_brand, vehicle_model FROM vehicles");
+if ($res && $res->num_rows > 0) {
+    $vehicles = $res->fetch_all(MYSQLI_ASSOC);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - Car Rental System</title>
+    <title>Book a Vehicle - Vehicle Rental System</title>
     <?php include 'includes/header.php'; ?>
 </head>
 <body class="bg-light">
-    <?php include 'includes/navigation.php'; ?>
+<?php include 'includes/navigation.php'; ?>
 
-    <div class="container py-5">
-        <h2 class="mb-4">My Bookings</h2>
-        
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?php 
-                echo $_SESSION['success'];
-                unset($_SESSION['success']);
-                ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
+<div class="container py-5">
+    <h2 class="mb-4">Book a Vehicle</h2>
 
-        <?php if ($bookings->num_rows > 0): ?>
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                <?php while($booking = $bookings->fetch_assoc()): ?>
-                    <div class="col">
-                        <div class="card h-100">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="<?php echo htmlspecialchars($booking['car_image']); ?>" 
-                                         class="img-fluid rounded-start h-100" 
-                                         alt="<?php echo htmlspecialchars($booking['car_name']); ?>"
-                                         style="object-fit: cover;">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title"><?php echo htmlspecialchars($booking['car_name']); ?></h5>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                Type: <?php echo htmlspecialchars($booking['car_type']); ?> | 
-                                                Price/Day: Rs. <?php echo number_format($booking['price'], 2); ?>
-                                            </small>
-                                        </p>
-                                        
-                                        <div class="mb-2">
-                                            <strong>Pickup:</strong> <?php echo date('M d, Y', strtotime($booking['pickup_date'])); ?><br>
-                                            <strong>Return:</strong> <?php echo date('M d, Y', strtotime($booking['return_date'])); ?><br>
-                                            <strong>Location:</strong> <?php echo htmlspecialchars($booking['pickup_location']); ?>
-                                        </div>
-                                        
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <strong>Total:</strong> 
-                                                <span class="text-primary">
-                                                    $<?php echo number_format($booking['total_amount'], 2); ?>
-                                                </span>
-                                            </div>
-                                            <span class="badge bg-<?php 
-                                                echo $booking['status'] === 'confirmed' ? 'success' : 
-                                                    ($booking['status'] === 'pending' ? 'warning' : 'danger'); 
-                                                ?>">
-                                                <?php echo ucfirst($booking['status']); ?>
-                                            </span>
-                                        </div>
-                                        
-                                        <?php if ($booking['status'] === 'pending'): ?>
-                                            <div class="mt-3">
-                                                <form action="cancel_booking.php" method="POST" 
-                                                      onsubmit="return confirm('Are you sure you want to cancel this booking?');">
-                                                    <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
-                                                    <button type="submit" class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-times me-1"></i>Cancel Booking
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
-            </div>
-        <?php else: ?>
-            <div class="text-center py-5">
-                <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
-                <h4>No Bookings Found</h4>
-                <p class="text-muted">You haven't made any car bookings yet.</p>
-                <a href="cars.php" class="btn btn-primary">
-                    <i class="fas fa-car me-2"></i>Browse Cars
-                </a>
-            </div>
-        <?php endif; ?>
-    </div>
+    <?php echo $message; ?>
 
-    <?php include 'includes/footer.php'; ?>
+    <form method="POST" class="card p-4 shadow-sm">
+        <div class="mb-3">
+            <label for="vehicle_id" class="form-label">Select Vehicle</label>
+            <select name="vehicle_id" id="vehicle_id" class="form-select" required>
+                <option value="">-- Choose Vehicle --</option>
+                <?php foreach ($vehicles as $v): ?>
+                    <option value="<?php echo $v['vehicle_id']; ?>">
+                        <?php echo htmlspecialchars($v['vehicle_brand'].' '.$v['vehicle_model']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="pickup_date" class="form-label">Pickup Date</label>
+            <input type="date" name="pickup_date" id="pickup_date" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="return_date" class="form-label">Return Date</label>
+            <input type="date" name="return_date" id="return_date" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="pickup_location" class="form-label">Pickup Location</label>
+            <input type="text" name="pickup_location" id="pickup_location" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="dropoff_location" class="form-label">Dropoff Location</label>
+            <input type="text" name="dropoff_location" id="dropoff_location" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-car me-1"></i> Confirm Booking
+        </button>
+    </form>
+</div>
+
+<?php include 'includes/footer.php'; ?>
 </body>
 </html>

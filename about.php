@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Car Rental System</title>
+    <title>About Us - SwiftRide System</title>
     <?php include 'includes/header.php'; ?>
 </head>
 <body class="bg-light">
@@ -15,40 +15,52 @@
             <div class="col-md-10">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-5">
-                        <h1 class="display-4 mb-4">About Us</h1>
+                        <h1 class="display-4 mb-4">About SwiftRide</h1>
                         <p class="lead text-muted mb-4">
-                            Welcome to Car Rental System, your trusted partner for all your car rental needs.
+                            Welcome to SwiftRide system, your trusted partner for all your vehicle rental needs.
                         </p>
 
                         <div class="row g-4 mb-5">
                             <div class="col-md-4">
                                 <div class="text-center">
                                     <i class="fas fa-car-side fa-3x text-primary mb-3"></i>
-                                    <h4>Wide Selection</h4>
-                                    <p class="text-muted">Choose from our diverse fleet of well-maintained vehicles.</p>
+                                    <h4>Extensive range</h4>
+                                    <p class="text-muted">SwiftRide provides an extensive range of vehicle,from bicycle to vans,ensuring the right ride for every trip.</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="text-center">
                                     <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
                                     <h4>Safe & Reliable</h4>
-                                    <p class="text-muted">All our vehicles undergo regular maintenance checks.</p>
+                                    <p class="text-muted">Our vehicles are well maintained and safety checked,giving you a smooth and worry free journey.</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="text-center">
                                     <i class="fas fa-headset fa-3x text-primary mb-3"></i>
-                                    <h4>24/7 Support</h4>
-                                    <p class="text-muted">Our customer support team is always here to help.</p>
+                                    <h4>24/7 Availability</h4>
+                                    <p class="text-muted">Book a ride anytime,anywhere.SwiftRide is always ready whenever you need us.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-mobile fa-3x text-primary mb-3"></i>
+                                    <h4>Easy Booking</h4>
+                                    <p class="text-muted">With a simple website and app,booking your ride takes just a few clicks.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-tags fa-3x text-primary mb-3"></i>
+                                    <h4>Affordable Pricing</h4>
+                                    <p class="text-muted">Enjoy transparent,budget frindly pricing with no hidden costs making travel easy on your wallet.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <h3 class="mb-4">Our Story</h3>
+                        <h3 class="mb-4">Who We Are?</h3>
                         <p class="mb-4">
-                            Founded with a vision to make car rentals accessible and hassle-free, we've grown to become
-                            one of the most trusted names in the industry. Our commitment to customer satisfaction and
-                            quality service has earned us the loyalty of countless satisfied customers.
+                            SwiftRide is a smart vehicle rental platform that connects people with affordable reads.From vans to bicycles,we make traveling simple,safe and accessible for everyone.Our Mission is "To make traval easy and budget-friendly by convenient,and reliable rides for everyone". Our vision is "To be the leading ride & rental service with innovation,trust and customer satisfaction at our core."
                         </p>
 
                         <h3 class="mb-4">Why Choose Us?</h3>
