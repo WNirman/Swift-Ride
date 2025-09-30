@@ -43,6 +43,7 @@ $stmt = $conn->prepare($sql_update);
 $stmt->bind_param("i", $booking_id);
 
 if ($stmt->execute()) {
+    // Booking approved, no need to insert provider_id into payments
     header("Location: bookings.php?success=Booking+approved");
 } else {
     header("Location: bookings.php?error=Failed+to+approve+booking");

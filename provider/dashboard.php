@@ -42,14 +42,13 @@ $pendingRequests = $result->fetch_assoc()['count'];
 
 // Total earnings
 $result = $conn->query("
-    SELECT SUM(p.amount) AS total
-    FROM payments p
-    JOIN bookings b ON p.booking_id = b.booking_id
+    SELECT SUM(b.total_amount) AS total
+    FROM bookings b
     JOIN vehicles v ON b.vehicle_id = v.vehicle_id
-    WHERE v.provider_id = $provider_id
+    WHERE v.provider_id = $provider_id AND b.status='confirmed'
 ");
-$totalEarnings = $result->fetch_assoc()['total'];
-?>
+$totalEarnings = $result->fetch_assoc()['total'] ?? 0;?>
+
 
 <!DOCTYPE html>
 <html lang="en">

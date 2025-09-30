@@ -108,7 +108,7 @@ $vehicles = $conn->query("SELECT v.*, l.city, l.branch
                         <option value="Van">Van</option>
                         <option value="Bike">Bike</option>
                         <option value="Bus">Bus</option>
-                        <option value="SUV">SUV</option>
+                        <option value="Bicycle">Bicycle</option>
                     </select>
                 </div>
 
