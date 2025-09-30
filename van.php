@@ -6,10 +6,10 @@ $conn = Connect();
 $today = date('Y-m-d');
 
 // Vehicle type for this page
-$typeFilter = 'Bike';
+$typeFilter = 'Van';
 
 // Optional filters (from GET parameters)
-$bikeType = isset($_GET['bike_type']) ? $_GET['bike_type'] : '';
+$vanType = isset($_GET['van_type']) ? $_GET['van_type'] : '';
 $locationFilter = isset($_GET['location']) ? $_GET['location'] : '';
 $priceSort = isset($_GET['price_sort']) ? $_GET['price_sort'] : ''; // "asc" or "desc"
 
@@ -25,11 +25,11 @@ $sql = "
 $params = [$typeFilter, $today];
 $types = "ss";
 
-// Bike type filter (using vehicle_model as category)
-if ($bikeType !== '' && $bikeType !== 'all') {
+// Van type filter (using vehicle_model as category)
+if ($vanType !== '' && $vanType !== 'all') {
     $sql .= " AND v.vehicle_model = ?";
     $types .= "s";
-    $params[] = $bikeType;
+    $params[] = $vanType;
 }
 
 // Location filter
@@ -51,8 +51,8 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Fetch unique bike types and locations
-$bikeTypes = $conn->query("SELECT DISTINCT vehicle_model FROM vehicles WHERE vehicle_type='Bike' ORDER BY vehicle_model")->fetch_all(MYSQLI_ASSOC);
+// Fetch unique van types and locations
+$vanTypes = $conn->query("SELECT DISTINCT vehicle_model FROM vehicles WHERE vehicle_type='Van' ORDER BY vehicle_model")->fetch_all(MYSQLI_ASSOC);
 $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->fetch_all(MYSQLI_ASSOC);
 ?>
 
@@ -62,7 +62,7 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ride On - Bikes</title>
+    <title>Go Big - Vans</title>
     <?php include 'includes/header.php'; ?>
     <style>
         .vehicle-img-top { width: 100%; height: 200px; object-fit: cover; object-position: center; }
@@ -72,17 +72,17 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
 <?php include 'includes/navigation.php'; ?>
 
 <div class="container py-5">
-    <h2 class="mb-4 text-primary">Ride On - Bikes</h2>
+    <h2 class="mb-4 text-warning">Go Big - Vans</h2>
 
 ```
 <!-- Filters Section -->
 <form class="row g-3 mb-4" method="GET">
     <div class="col-md-3">
-        <select name="bike_type" class="form-select">
-            <option value="all">All Bike Types</option>
-            <?php foreach($bikeTypes as $b): ?>
-                <option value="<?= htmlspecialchars($b['vehicle_model']) ?>" <?= $bikeType==$b['vehicle_model']?'selected':'' ?>>
-                    <?= htmlspecialchars($b['vehicle_model']) ?>
+        <select name="van_type" class="form-select">
+            <option value="all">All Van Types</option>
+            <?php foreach($vanTypes as $v): ?>
+                <option value="<?= htmlspecialchars($v['vehicle_model']) ?>" <?= $vanType==$v['vehicle_model']?'selected':'' ?>>
+                    <?= htmlspecialchars($v['vehicle_model']) ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -105,7 +105,7 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
         </select>
     </div>
     <div class="col-md-3">
-        <button type="submit" class="btn btn-primary w-100">Find Your Ride</button>
+        <button type="submit" class="btn btn-warning w-100">Find Your Van</button>
     </div>
 </form>
 
@@ -117,7 +117,7 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
                 <div class="card h-100 shadow-sm">
                     <?php $img = !empty($vehicle['vehicle_image']) 
                         ? $vehicle['vehicle_image'] 
-                        : 'assets/img/bikes/default.jpg'; ?>
+                        : 'assets/img/vans/default.jpg'; ?>
                     <img src="<?= htmlspecialchars($img) ?>" class="vehicle-img-top" 
                         alt="<?= htmlspecialchars($vehicle['vehicle_brand'].' '.$vehicle['vehicle_model']) ?>">
 
@@ -133,11 +133,11 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
                             Rs. <?= number_format($vehicle['price'],2) ?> <small class="text-muted">/ day</small>
                         </div>
                         <?php if (is_user_logged_in()): ?>
-                            <a href="my_bookings.php?vehicle_id=<?= $vehicle['vehicle_id'] ?>" class="btn btn-primary w-100">
+                            <a href="my_bookings.php?vehicle_id=<?= $vehicle['vehicle_id'] ?>" class="btn btn-warning w-100">
                                 <i class="fas fa-calendar-check me-1"></i>Book Now
                             </a>
                         <?php else: ?>
-                            <a href="login.php" class="btn btn-outline-primary w-100">
+                            <a href="login.php" class="btn btn-outline-warning w-100">
                                 <i class="fas fa-sign-in-alt me-1"></i>Login to Book
                             </a>
                         <?php endif; ?>
@@ -148,7 +148,7 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
     <?php else: ?>
         <div class="col-12 text-center">
             <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>No bikes available at the moment.
+                <i class="fas fa-info-circle me-2"></i>No vans available at the moment.
             </div>
         </div>
     <?php endif; ?>
