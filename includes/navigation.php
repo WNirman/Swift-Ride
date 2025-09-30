@@ -18,12 +18,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
-    <a class="nav-link <?php echo $current_page === 'my_bookings.php' ? 'active' : ''; ?>" 
-       href="javascript:void(0);" 
-       onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });">
+    <a class="nav-link <?php echo $current_page === 'index.php' ? 'active' : ''; ?>" 
+       href="index.php#bottom"
+       onclick="if(window.location.pathname.endsWith('index.php')){ window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); return false; }">
         <i class="fas fa-car me-1"></i>Vehicles
     </a>
 </li>
+
 
                 <?php if (is_user_logged_in()): ?>
                 <li class="nav-item">
