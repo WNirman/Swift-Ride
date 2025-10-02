@@ -3,14 +3,6 @@ session_start();
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/config.php';
 
-// PHPMailer
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require __DIR__ . '/../PHPMailer/src/Exception.php';
-require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/../PHPMailer/src/SMTP.php';
-
 // Check if provider is logged in
 if (!is_provider_logged_in()) {
     header("Location: provider_login.php");
@@ -52,7 +44,7 @@ $stmt_update->bind_param("i", $booking_id);
 
 if ($stmt_update->execute()) {
 
-    // --- SEND CONFIRMATION EMAIL USING PHPMailer ---
+    // --- SEND CONFIRMATION EMAIL ---
     $sql_user = "
         SELECT u.name AS user_name, u.email AS user_email, v.vehicle_brand, v.vehicle_model, b.pickup_date, b.return_date
         FROM bookings b
@@ -67,39 +59,20 @@ if ($stmt_update->execute()) {
     $user = $result_user->fetch_assoc();
 
     if ($user) {
-        $mail = new PHPMailer(true);
-        try {
-            // SMTP server settings
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'wanithnirman@gmail.com';  // Provider's Gmail
-            $mail->Password   = 'your_app_password';       // Gmail App Password
-            $mail->SMTPSecure = 'tls';
-            $mail->Port       = 587;
+        $to = $user['user_email'];
+        $vehicle_name = trim($user['vehicle_brand'] . ' ' . $user['vehicle_model']); // Combine brand and model
+        $subject = "Booking Confirmed for " . $vehicle_name;
+        $message = "Hello " . $user['user_name'] . ",\n\n";
+        $message .= "Your booking for the vehicle '" . $vehicle_name . "' has been confirmed.\n\n";
+        $message .= "Booking Details:\n";
+        $message .= "- From: " . $user['pickup_date'] . "\n";
+        $message .= "- To: " . $user['return_date'] . "\n\n";
+        $message .= "Thank you for choosing our service!\n";
 
-            // Recipients
-            $mail->setFrom('wanithnirman@gmail.com', 'Car Rental');
-            $mail->addAddress($user['user_email'], $user['user_name']);
+        $headers = "From: no-reply@carrental.com\r\n";
+        $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-            // Email content
-            $vehicle_name = trim($user['vehicle_brand'] . ' ' . $user['vehicle_model']);
-            $mail->isHTML(true);
-            $mail->Subject = "Booking Confirmed for " . $vehicle_name;
-            $mail->Body    = "
-                <p>Hello {$user['user_name']},</p>
-                <p>Your booking for the vehicle <strong>{$vehicle_name}</strong> has been confirmed.</p>
-                <p><strong>Booking Details:</strong><br>
-                From: {$user['pickup_date']}<br>
-                To: {$user['return_date']}</p>
-                <p>Thank you for choosing our service!</p>
-            ";
-
-            $mail->send();
-        } catch (Exception $e) {
-            // Log the error but do not block the approval
-            error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
-        }
+        mail($to, $subject, $message, $headers);
     }
 
     header("Location: bookings.php?success=Booking+approved+and+email+sent");
