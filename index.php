@@ -123,5 +123,146 @@ window.addEventListener("scroll", () => {
     if(heroSub) heroSub.style.opacity = opacity;
 });
 </script>
+<!-- Chatbot Floating Button -->
+<div id="chatBtnCircle">Swift</div>
+
+<!-- Chatbot Window -->
+<div id="chatBtn">
+  <div id="chatHeader">
+    <span><strong>Swift Guide</strong></span>
+    <span id="closeBtn" style="cursor:pointer;">✖</span>
+  </div>
+  <div id="chatMessages">
+    <div><b>Bot:</b> Hi! I’m your travel guide 🤖. How many days will you travel?</div>
+  </div>
+  <div id="chatInput">
+    <input id="chatbot-input" type="text" placeholder="Type here...">
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<style>
+#chatBtnCircle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+
+#chatBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px; height: 450px;
+  border-radius: 16px;
+  background: #fff;
+  display: none;
+  flex-direction: column;
+  padding: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+
+#chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+#chatMessages {
+  flex: 1; overflow-y: auto; margin-top: 10px; font-size: 14px; color: #444;
+}
+
+#chatInput { display: flex; margin-top: 10px; }
+#chatInput input {
+  flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 6px 0 0 6px;
+}
+#chatInput button {
+  background: #007bff; border: none; color: white;
+  padding: 5px 10px; border-radius: 0 6px 6px 0; cursor: pointer;
+}
+</style>
+
+<script>
+let step = 0;
+let userData = {};
+
+const chatBtn = document.getElementById('chatBtn');
+const chatBtnCircle = document.getElementById('chatBtnCircle');
+const closeBtn = document.getElementById('closeBtn');
+const sendBtn = document.getElementById('sendBtn');
+const chatMessages = document.getElementById('chatMessages');
+const userInput = document.getElementById('chatbot-input');
+
+// Open chat
+chatBtnCircle.addEventListener('click', () => {
+  chatBtn.style.display = 'flex';
+  chatBtnCircle.style.display = 'none';
+});
+
+// Close chat
+closeBtn.addEventListener('click', () => {
+  chatBtn.style.display = 'none';
+  chatBtnCircle.style.display = 'flex';
+});
+
+// Add message
+function addMessage(sender, text) {
+  const msg = document.createElement("div");
+  msg.innerHTML = `<b>${sender}:</b> ${text}`;
+  chatMessages.appendChild(msg);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Send message
+function sendMessage() {
+  const userText = userInput.value.trim();
+  if (!userText) return;
+  addMessage("You", userText);
+  userInput.value = "";
+
+  if (step === 0) {
+    userData.days = parseInt(userText);
+    step++;
+    addMessage("Bot", "Great! 👌 How many people are traveling?");
+  } else if (step === 1) {
+    userData.people = parseInt(userText);
+    step++;
+    addMessage("Bot", "Got it. From which city will you pick up the vehicle?");
+  } else if (step === 2) {
+    userData.city = userText;
+    step++;
+    fetch("chatbot.php", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(userData)
+    })
+    .then(res => res.json())
+    .then(data => addMessage("Bot", data.reply));
+  } else {
+    addMessage("Bot", "Would you like to book now? 🚀");
+  }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+
+// Send message on Enter key
+userInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+</script>
+
 </body>
 </html>

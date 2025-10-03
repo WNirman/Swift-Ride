@@ -6,19 +6,17 @@
                 <p class="mb-0">Your trusted partner for all your vehicle rental needs. Quality vehicles and exceptional service since 2025.</p>
             </div>
             <div class="col-md-4 mb-4 mb-md-0">
-    <h5>Quick Links</h5>
-    <ul class="list-unstyled">
-        <li><a href="cars.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Available Cars</a></li>
-        <li><a href="about.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>About Us</a></li>
-        <li><a href="contact.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Contact Us</a></li>
-
-        <?php if (!function_exists('is_user_logged_in') || !is_user_logged_in()): ?>
-            <li><a href="login.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Login</a></li>
-            <li><a href="register.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Register</a></li>
-        <?php endif; ?>
-    </ul>
-</div>
-
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="cars.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Available Cars</a></li>
+                    <li><a href="about.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>About Us</a></li>
+                    <li><a href="contact.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Contact Us</a></li>
+                    <?php if (!function_exists('is_user_logged_in') || !is_user_logged_in()): ?>
+                        <li><a href="login.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Login</a></li>
+                        <li><a href="register.php" class="text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Register</a></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
             <div class="col-md-4">
                 <h5>Contact Info</h5>
                 <ul class="list-unstyled">
@@ -48,3 +46,38 @@
         </div>
     </div>
 </footer>
+
+<!-- Agentforce / Salesforce Embedded Chatbot -->
+<script type="text/javascript">
+    window.embedded_svc = window.embedded_svc || {};
+    window.embedded_svc.settings = {
+        orgId: "YOUR_SALESFORCE_ORG_ID",
+        deploymentId: "YOUR_DEPLOYMENT_ID",
+        buttonId: "YOUR_BUTTON_ID",
+        baseLiveAgentContentURL: "https://YOUR_INSTANCE.salesforceliveagent.com/content",
+        baseLiveAgentURL: "https://YOUR_INSTANCE.salesforceliveagent.com/chat",
+        eswLiveAgentDevName: "EmbeddedServiceLiveAgent_Parent04I3A000000XXXX",
+        isOfflineSupportEnabled: true
+    };
+
+    var initESW = function(gslbBaseURL) {
+        embedded_svc.init(
+            gslbBaseURL,
+            "https://YOUR_INSTANCE.salesforceliveagent.com/chat",
+            gslbBaseURL,
+            "YOUR_ORG_ID",
+            "YOUR_DEPLOYMENT_NAME",
+            {
+                baseLiveAgentContentURL: "https://YOUR_INSTANCE.salesforceliveagent.com/content",
+                deploymentId: "YOUR_DEPLOYMENT_ID",
+                buttonId: "YOUR_BUTTON_ID",
+                eswLiveAgentDevName: "EmbeddedServiceLiveAgent_Parent04I3A000000XXXX",
+                isOfflineSupportEnabled: true
+            }
+        );
+    };
+
+    embedded_svc.loadScript('https://YOUR_INSTANCE.salesforceliveagent.com/embeddedservice/5.0/esw.min.js', function() {
+        initESW('https://YOUR_INSTANCE.salesforceliveagent.com');
+    });
+</script>

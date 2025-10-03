@@ -32,6 +32,18 @@ if ($result_check->num_rows == 0) {
     die("Error: Vehicle not found or you don't have permission to delete it.");
 }
 
+// Check if there are existing bookings for this vehicle
+$sql_booking = "SELECT COUNT(*) as count FROM bookings WHERE vehicle_id = ?";
+$stmt_booking = $conn->prepare($sql_booking);
+$stmt_booking->bind_param("i", $vehicle_id);
+$stmt_booking->execute();
+$result_booking = $stmt_booking->get_result();
+$row_booking = $result_booking->fetch_assoc();
+
+if ($row_booking['count'] > 0) {
+    die("Error: Cannot delete vehicle. There are existing bookings for this vehicle.");
+}
+
 // Delete the vehicle
 $sql_delete = "DELETE FROM vehicles WHERE vehicle_id = ? AND provider_id = ?";
 $stmt_delete = $conn->prepare($sql_delete);
