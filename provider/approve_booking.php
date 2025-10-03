@@ -5,6 +5,8 @@ require_once __DIR__ . '/../includes/config.php';
 
 // PHPMailer autoload
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// ✅ Namespace imports must come AFTER autoload
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -73,7 +75,7 @@ if ($stmt_update->execute()) {
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
             $mail->Username   = 'wanithnirman@gmail.com'; // your Gmail
-            $mail->Password   = 'xttu iagy erfm xfuq';  // 16-character app password
+            $mail->Password   = 'xttu iagy erfm xfuq';    // 16-character Gmail app password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
