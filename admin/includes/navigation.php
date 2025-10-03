@@ -14,7 +14,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'cars.php' ? 'active' : ''; ?>" href="cars.php">
+                    <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'cars.php' ? 'active' : ''; ?>" href="vehicles.php">
                         <i class="fas fa-car"></i> Vehicles
                     </a>
                 </li>
