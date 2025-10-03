@@ -28,7 +28,6 @@ $main_vehicle_types = [
 <style>
 body { font-family: 'Poppins', sans-serif; }
 
-/* Hero Section remains unchanged */
 .hero {
     position: relative;
     height: 70vh;
@@ -42,9 +41,49 @@ body { font-family: 'Poppins', sans-serif; }
 .hero-content { position: relative; z-index: 2; max-width: 45%; margin-top: 0; margin-left: 0; }
 .hero-text { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; color: #f0eaeaff; line-height: 1.2; margin-bottom: 0.5rem; transition: transform 0.1s ease, opacity 0.2s ease; }
 .hero-subtext { font-family: 'Poppins', sans-serif; font-size: 1.2rem; color: #f5ededff; margin: 0; transition: transform 0.1s ease, opacity 0.2s ease; }
-.hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('assets/img/bg1.webp'); background-size: cover; background-position: center; opacity: 0.8; z-index: 1; }
 
-/* Main Vehicle Section */
+.hero-bg-container {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+.hero-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+.hero-bg.show {
+    opacity: 0.8;
+    z-index: 1;
+}
+.hero-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+}
+.hero-dots span {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.hero-dots span.active {
+    background-color: #ffffff;
+}
+
+/* Quick Vehicle Section */
 .quick-vehicles {
     display: flex;
     justify-content: center;
@@ -80,13 +119,21 @@ body { font-family: 'Poppins', sans-serif; }
 <body class="bg-light d-flex flex-column min-vh-100">
 <?php include 'includes/navigation.php'; ?>
 
-<!-- Hero Section remains unchanged -->
+<!-- Hero Section -->
 <div class="hero" id="hero">
     <div class="hero-content">
         <h1 class="hero-text" id="hero-text">Find Your Perfect Ride</h1>
         <p class="hero-subtext">Rent cars, bikes, vans & more. Anywhere. Anytime.</p>
     </div>
-    <div class="hero-bg" id="hero-bg"></div>
+    <!-- Background slideshow images -->
+    <div class="hero-bg-container">
+        <div class="hero-bg fade show" style="background-image: url('assets/img/bg1.webp');"></div>
+        <div class="hero-bg fade" style="background-image: url('assets/img/bg2.webp');"></div>
+        <div class="hero-bg fade" style="background-image: url('assets/img/bg3.webp');"></div>
+        <div class="hero-bg fade" style="background-image: url('assets/img/bg4.webp');"></div>
+    </div>
+    <!-- Navigation dots -->
+    <div class="hero-dots" id="hero-dots"></div>
 </div>
 
 <!-- Quick Vehicle Selection Section -->
@@ -104,29 +151,58 @@ body { font-family: 'Poppins', sans-serif; }
 
 <?php include 'includes/footer.php'; ?>
 
+<!-- Parallax & Slide Show -->
 <script>
-// Hero parallax effect (unchanged)
-const heroText = document.getElementById("hero-text");
-const heroSub = document.querySelector(".hero-subtext");
+  const heroText = document.getElementById("hero-text");
+  const heroSub = document.querySelector(".hero-subtext");
+  const slides = document.querySelectorAll('.hero-bg');
+  const dotsContainer = document.getElementById('hero-dots');
+  let currentSlide = 0;
+  let dots = [];
 
-document.getElementById("hero").addEventListener("mousemove", (e) => {
-    const x = (e.clientX / window.innerWidth) - 0.5;
-    const y = (e.clientY / window.innerHeight) - 0.5;
-    heroText.style.transform = `translate(${x * 20}px, ${y * 10}px)`;
-    if(heroSub) heroSub.style.transform = `translate(${x * 10}px, ${y * 5}px)`;
-});
+  // Create dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('span');
+    dot.addEventListener('click', () => showSlide(i));
+    dotsContainer.appendChild(dot);
+    dots.push(dot);
+  });
 
-window.addEventListener("scroll", () => {
-    const scrollY = window.scrollY;
-    const opacity = Math.max(0.2, 1 - scrollY / 400);
-    heroText.style.opacity = opacity;
-    if(heroSub) heroSub.style.opacity = opacity;
-});
+  function showSlide(index) {
+    slides[currentSlide].classList.remove('show');
+    dots[currentSlide].classList.remove('active');
+    currentSlide = index;
+    slides[currentSlide].classList.add('show');
+    dots[currentSlide].classList.add('active');
+  }
+
+  function nextSlide() {
+    let nextIndex = (currentSlide + 1) % slides.length;
+    showSlide(nextIndex);
+  }
+
+  // Init
+  showSlide(0);
+  setInterval(nextSlide, 4000);
+
+  // Parallax Effect
+  document.getElementById("hero").addEventListener("mousemove", (e) => {
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
+      heroText.style.transform = `translate(${x * 20}px, ${y * 10}px)`;
+      if(heroSub) heroSub.style.transform = `translate(${x * 10}px, ${y * 5}px)`;
+  });
+
+  window.addEventListener("scroll", () => {
+      const scrollY = window.scrollY;
+      const opacity = Math.max(0.2, 1 - scrollY / 400);
+      heroText.style.opacity = opacity;
+      if(heroSub) heroSub.style.opacity = opacity;
+  });
 </script>
+
 <!-- Chatbot Floating Button -->
 <div id="chatBtnCircle">Swift</div>
-
-<!-- Chatbot Window -->
 <div id="chatBtn">
   <div id="chatHeader">
     <span><strong>Swift Guide</strong></span>
@@ -140,7 +216,6 @@ window.addEventListener("scroll", () => {
     <button id="sendBtn">Send</button>
   </div>
 </div>
-
 <style>
 #chatBtnCircle {
   position: fixed;
@@ -158,7 +233,6 @@ window.addEventListener("scroll", () => {
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   z-index: 9999;
 }
-
 #chatBtn {
   position: fixed;
   bottom: 20px;
@@ -172,7 +246,6 @@ window.addEventListener("scroll", () => {
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   z-index: 9999;
 }
-
 #chatHeader {
   display: flex;
   justify-content: space-between;
@@ -180,11 +253,9 @@ window.addEventListener("scroll", () => {
   padding-bottom: 8px;
   border-bottom: 1px solid #ddd;
 }
-
 #chatMessages {
   flex: 1; overflow-y: auto; margin-top: 10px; font-size: 14px; color: #444;
 }
-
 #chatInput { display: flex; margin-top: 10px; }
 #chatInput input {
   flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 6px 0 0 6px;
@@ -194,7 +265,6 @@ window.addEventListener("scroll", () => {
   padding: 5px 10px; border-radius: 0 6px 6px 0; cursor: pointer;
 }
 </style>
-
 <script>
 let step = 0;
 let userData = {};
@@ -255,10 +325,7 @@ function sendMessage() {
     addMessage("Bot", "Would you like to book now? 🚀");
   }
 }
-
 sendBtn.addEventListener('click', sendMessage);
-
-// Send message on Enter key
 userInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
