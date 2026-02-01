@@ -36,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-body">
+        <div class="row min-vh-100 align-items-center justify-content-center">
+            <div class="col-md-5">
+                <div class="card shadow animate-up">
+                    <div class="card-body p-5">
                         <h2 class="text-center mb-4">Login</h2>
                         <?php echo display_message(); ?>
                         <?php if (isset($error)): ?>

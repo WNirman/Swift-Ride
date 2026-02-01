@@ -121,7 +121,7 @@ body { font-family: 'Poppins', sans-serif; }
 
 <!-- Hero Section -->
 <div class="hero" id="hero">
-    <div class="hero-content">
+    <div class="hero-content animate-up">
         <h1 class="hero-text" id="hero-text">Find Your Perfect Ride</h1>
         <p class="hero-subtext">Rent cars, bikes, vans & more. Anywhere. Anytime.</p>
     </div>
@@ -137,9 +137,9 @@ body { font-family: 'Poppins', sans-serif; }
 </div>
 
 <!-- Quick Vehicle Selection Section -->
-<div class="container text-center">
-    <h2 class="mb-4">Choose Your Ride</h2>
-    <div class="quick-vehicles">
+<div class="container text-center py-5">
+    <h2 class="mb-5 fw-bold animate-up">Choose Your Ride</h2>
+    <div class="quick-vehicles animate-up" style="animation-delay: 0.2s;">
         <?php foreach($main_vehicle_types as $type => $data): ?>
             <div class="vehicle-box" onclick="window.location.href='<?php echo $data['link']; ?>'">
                 <div class="vehicle-icon"><i class="<?php echo $data['icon']; ?>"></i></div>

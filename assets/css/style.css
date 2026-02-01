@@ -1,398 +1,217 @@
+:root {
+    --primary-color: #007bff;
+    --primary-glow: rgba(0, 123, 255, 0.5);
+    --secondary-color: #6c757d;
+    --dark-bg: #0f172a;
+    --light-bg: #f8fafc;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* General Styles */
 body {
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Glassmorphism Utility */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 /* Navigation Styles */
 .navbar {
     padding: 1rem 0;
-    background-color: #1a1a1a !important;
-    transition: background-color 0.3s ease;
+    background: transparent !important;
+    transition: var(--transition);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .navbar.scrolled {
-    background-color: rgba(26, 26, 26, 0.95) !important;
+    background: rgba(15, 23, 42, 0.8) !important;
     backdrop-filter: blur(10px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Hero Section */
-.hero-section {
-    position: relative;
-    background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
-    padding: 100px 0;
-    margin-top: -76px; /* Offset for fixed navbar */
-    overflow: hidden;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('../img/pattern.png');
-    opacity: 0.1;
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
-    z-index: 1;
-}
-
-.hero-section .container {
-    position: relative;
-    z-index: 2;
-}
-
-.hero-section h1 {
-    font-weight: 800;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.hero-section p {
-    font-size: 1.25rem;
-    opacity: 0.9;
-    margin-bottom: 2rem;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.hero-section img {
-    transform: scale(1.1);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
+    padding: 0.6rem 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.5px;
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #fff !important;
-}
-
-.navbar-brand i {
-    color: #007bff;
 }
 
 .nav-link {
     font-weight: 500;
-    padding: 0.5rem 1rem !important;
-    transition: all 0.3s ease;
+    margin: 0 0.5rem;
     position: relative;
-    color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    color: #fff !important;
-}
-
-.nav-link i {
-    color: #007bff;
-    transition: transform 0.3s ease;
-}
-
-.nav-link:hover i {
-    transform: translateY(-2px);
-}
-
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 0.5rem;
-}
-
-.dropdown-item {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-    background-color: #f8f9fa;
-    transform: translateX(5px);
-}
-
-.dropdown-item i {
-    color: #6c757d;
-}
-
-.dropdown-item.text-danger i {
-    color: #dc3545;
-}
-
-/* Profile Dropdown Button */
-.nav-item .btn-link.nav-link {
-    padding: 0.5rem 1rem;
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: none;
-    border: none;
-    background: none;
-}
-
-.nav-item .btn-link.nav-link:hover,
-.nav-item .btn-link.nav-link:focus {
-    color: #fff;
-}
-
-.nav-item .btn-link.nav-link::after {
-    display: inline-block;
-    margin-left: 0.5em;
-    vertical-align: 0.2em;
-    content: "";
-    border-top: 0.3em solid;
-    border-right: 0.3em solid transparent;
-    border-bottom: 0;
-    border-left: 0.3em solid transparent;
-}
-
-/* Add padding to body to account for fixed navbar */
-body {
-    padding-top: 76px;
-}
-
-/* Main Content */
-.main-content {
-    flex: 1;
-    padding: 2rem 0;
-}
-
-/* Car Cards */
-.car-card {
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.car-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-.car-img-top {
-    height: 200px;
-    object-fit: cover;
-}
-
-.car-features {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
-    font-size: 0.9rem;
-}
-
-.car-feature {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.car-price {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #007bff;
-}
-
-/* Search Bar */
-.search-container {
-    max-width: 600px;
-    margin: 2rem auto;
-}
-
-.search-input {
-    border-radius: 50px;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
-}
-
-.search-input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../img/hero-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 5rem 0;
-    margin-bottom: 3rem;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    opacity: 0.9;
-    margin-bottom: 2rem;
-}
-
-/* Footer */
-.footer {
-    background-color: #1a1a1a;
-    color: white;
-    padding: 3rem 0;
-    margin-top: auto;
-}
-
-.footer h5 {
-    color: #007bff;
-    margin-bottom: 1.5rem;
-}
-
-.footer p {
     opacity: 0.8;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-    
-    .car-img-top {
-        height: 160px;
-    }
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: var(--transition);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+.nav-link:hover {
+    opacity: 1;
 }
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/hero-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 100px 0;
+    height: 85vh !important;
+    padding-top: 100px;
 }
 
-/* Card Styles */
-.card {
-    transition: transform 0.2s;
+.hero-content {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2.5rem;
+    border-radius: 24px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-text {
+    font-size: 4rem !important;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Vehicle Cards */
+.vehicle-box {
+    border: none !important;
+    border-radius: 20px !important;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    padding: 2.5rem !important;
+    width: 180px !important;
+    transition: var(--transition) !important;
+}
+
+.vehicle-box:hover {
+    transform: translateY(-12px) !important;
+    box-shadow: 0 20px 40px rgba(0,123,255,0.15) !important;
+}
+
+.vehicle-icon {
+    font-size: 3.5rem !important;
+    background: linear-gradient(45deg, var(--primary-color), #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem !important;
+}
+
+.vehicle-name {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: var(--text-main) !important;
+}
+
+/* Modern Forms */
+.card.shadow {
     border: none;
+    border-radius: 24px;
+    overflow: hidden;
 }
 
-.card:hover {
-    transform: translateY(-5px);
+.form-control {
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    transition: var(--transition);
 }
 
-.card-img-top {
-    height: 200px;
-    object-fit: contain;
-    background: #f8f9fa;
-    padding: 1rem;
+.form-control:focus {
+    background: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
 }
 
-/* Custom Button Styles */
 .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+    border-radius: 12px;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, var(--primary-color), #00c6ff);
+    border: none;
+    transition: var(--transition);
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
 }
 
-/* Navigation */
-.navbar {
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+/* Chatbot UI Enhancement */
+#chatBtnCircle {
+    background: linear-gradient(45deg, var(--primary-color), #00c6ff) !important;
+    width: 65px !important;
+    height: 65px !important;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.navbar-brand {
-    font-weight: bold;
+#chatBtn {
+    border-radius: 24px !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    overflow: hidden;
 }
 
-/* Form Styles */
-.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
-/* Footer */
-footer {
-    margin-top: auto;
-}
-
-/* Responsive Images */
-.img-fluid {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Search Bar */
-.search-bar {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-/* Price Tag */
-.price-tag {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0,0,0,0.7);
+#chatHeader {
+    background: var(--primary-color);
     color: white;
-    padding: 5px 10px;
-    border-radius: 3px;
+    padding: 15px !important;
 }
 
-/* Car Features */
-.car-features {
-    display: flex;
-    gap: 15px;
-    margin: 10px 0;
+#chatInput input {
+    border-radius: 12px 0 0 12px !important;
 }
 
-.feature-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+#chatInput button {
+    border-radius: 0 12px 12px 0 !important;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero {
-        padding: 50px 0;
-    }
-    
-    .card-img-top {
-        height: 150px;
-    }
-}
-
-/* Animation */
-.fade-in {
-    animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
+/* Animations */
+@keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -401,4 +220,8 @@ footer {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.animate-up {
+    animation: fadeInUp 0.6s ease forwards;
 }

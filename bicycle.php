@@ -41,8 +41,10 @@ if ($locationFilter !== '' && $locationFilter !== 'all') {
 
 // Price sorting
 $orderBy = "v.vehicle_model"; // default
-if ($priceSort === "asc") $orderBy = "v.price ASC";
-elseif ($priceSort === "desc") $orderBy = "v.price DESC";
+if ($priceSort === "asc")
+    $orderBy = "v.price ASC";
+elseif ($priceSort === "desc")
+    $orderBy = "v.price DESC";
 
 $sql .= " ORDER BY $orderBy";
 
@@ -57,101 +59,143 @@ $locations = $conn->query("SELECT DISTINCT city FROM locations ORDER BY city")->
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedal Power - Bicycles</title>
     <?php include 'includes/header.php'; ?>
     <style>
-        .vehicle-img-top { width: 100%; height: 200px; object-fit: cover; object-position: center; }
+        .vehicle-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            object-position: center;
+        }
     </style>
 </head>
+
 <body class="bg-light">
-<?php include 'includes/navigation.php'; ?>
+    <?php include 'includes/navigation.php'; ?>
 
-<div class="container py-5">
-    <h2 class="mb-4 text-success">Pedal Power - Bicycles</h2>
+    <div class="main-content">
+        <div class="container py-5">
+            <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+                <h2 class="fw-bold m-0 text-primary">Pedal Power - <span><?= htmlspecialchars($typeFilter) ?>s</span>
+                </h2>
+            </div>
 
-    <!-- Filters Section -->
-    <form class="row g-3 mb-4" method="GET">
-        <div class="col-md-3">
-            <select name="category" class="form-select">
-                <option value="all">All Categories</option>
-                <?php foreach($categories as $c): ?>
-                    <option value="<?= htmlspecialchars($c['vehicle_model']) ?>" <?= $categoryFilter==$c['vehicle_model']?'selected':'' ?>>
-                        <?= htmlspecialchars($c['vehicle_model']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select name="location" class="form-select">
-                <option value="all">All Locations</option>
-                <?php foreach($locations as $l): ?>
-                    <option value="<?= htmlspecialchars($l['city']) ?>" <?= $locationFilter==$l['city']?'selected':'' ?>>
-                        <?= htmlspecialchars($l['city']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select name="price_sort" class="form-select">
-                <option value="">Sort by Price</option>
-                <option value="asc" <?= $priceSort=='asc'?'selected':'' ?>>Low to High</option>
-                <option value="desc" <?= $priceSort=='desc'?'selected':'' ?>>High to Low</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-success w-100">Find Your Ride</button>
-        </div>
-    </form>
+            <!-- Filters Section -->
+            <div class="glass p-4 rounded-4 mb-5 animate-up" style="animation-delay: 0.1s;">
+                <form class="row g-3" method="GET">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Category</label>
+                        <select name="category" class="form-select border-0 bg-light">
+                            <option value="all">All Models</option>
+                            <?php foreach ($categories as $c): ?>
+                                <option value="<?= htmlspecialchars($c['vehicle_model']) ?>"
+                                    <?= $categoryFilter == $c['vehicle_model'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($c['vehicle_model']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Location</label>
+                        <select name="location" class="form-select border-0 bg-light">
+                            <option value="all">All Locations</option>
+                            <?php foreach ($locations as $l): ?>
+                                <option value="<?= htmlspecialchars($l['city']) ?>"
+                                    <?= $locationFilter == $l['city'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($l['city']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Price Range</label>
+                        <select name="price_sort" class="form-select border-0 bg-light">
+                            <option value="">Sort by Price</option>
+                            <option value="asc" <?= $priceSort == 'asc' ? 'selected' : '' ?>>Low to High</option>
+                            <option value="desc" <?= $priceSort == 'desc' ? 'selected' : '' ?>>High to Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                            <i class="fas fa-search me-2"></i>Apply Filters
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-    <!-- Vehicle Cards -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        <?php if ($result && $result->num_rows > 0): ?>
-            <?php while($vehicle = $result->fetch_assoc()): ?>
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <?php $img = !empty($vehicle['vehicle_image']) 
-                            ? $vehicle['vehicle_image'] 
-                            : 'assets/img/bicycles/default.jpg'; ?>
-                        <img src="<?= htmlspecialchars($img) ?>" class="vehicle-img-top" 
-                            alt="<?= htmlspecialchars($vehicle['vehicle_brand'].' '.$vehicle['vehicle_model']) ?>">
+            <!-- Vehicle Cards -->
+            <div class="row row-cols-1 row-cols-md-3 g-4 animate-up" style="animation-delay: 0.2s;">
+                <?php if ($result && $result->num_rows > 0): ?>
+                    <?php while ($vehicle = $result->fetch_assoc()): ?>
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden vehicle-card-modern">
+                                <?php $img = !empty($vehicle['vehicle_image'])
+                                    ? $vehicle['vehicle_image']
+                                    : 'assets/img/default-bicycle.jpg'; ?>
+                                <div class="position-relative">
+                                    <img src="<?= htmlspecialchars($img) ?>" class="card-img-top"
+                                        style="height: 220px; object-fit: cover;"
+                                        alt="<?= htmlspecialchars($vehicle['vehicle_brand'] . ' ' . $vehicle['vehicle_model']) ?>">
+                                    <div class="position-absolute top-0 end-0 m-3">
+                                        <span class="badge glass text-dark py-2 px-3 rounded-pill fw-bold">
+                                            Rs. <?= number_format($vehicle['price']) ?> / day
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <div class="card-body">
-                            <h5 class="card-title"><?= htmlspecialchars($vehicle['vehicle_brand'].' '.$vehicle['vehicle_model']) ?></h5>
-                            <div class="mb-3">
-                                <span class="badge bg-<?= $vehicle['vehicle_availability']==='yes'?'success':'danger' ?>">
-                                    <i class="fas fa-<?= $vehicle['vehicle_availability']==='yes'?'check':'times' ?> me-1"></i>
-                                    <?= $vehicle['vehicle_availability']==='yes'?'Available':'Not Available' ?>
-                                </span>
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-2">
+                                        <?= htmlspecialchars($vehicle['vehicle_brand'] . ' ' . $vehicle['vehicle_model']) ?></h5>
+                                    <div class="d-flex align-items-center mb-4 text-muted small">
+                                        <span class="me-3"><i class="fas fa-map-marker-alt me-1 text-primary"></i>
+                                            <?= htmlspecialchars($vehicle['city'] ?? 'Anywhere') ?></span>
+                                        <span><i class="fas fa-bicycle me-1 text-primary"></i> Bicycle</span>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between mt-auto">
+                                        <?php if ($vehicle['vehicle_availability'] === 'yes'): ?>
+                                            <span class="text-success small fw-bold"><i class="fas fa-circle me-1"
+                                                    style="font-size: 8px;"></i> Available</span>
+                                        <?php else: ?>
+                                            <span class="text-secondary small fw-bold"><i class="fas fa-circle me-1"
+                                                    style="font-size: 8px;"></i> Booked</span>
+                                        <?php endif; ?>
+
+                                        <?php if (is_user_logged_in()): ?>
+                                            <a href="my_bookings.php?vehicle_id=<?= $vehicle['vehicle_id'] ?>"
+                                                class="btn btn-primary btn-sm px-4 rounded-pill">
+                                                Book Now
+                                            </a>
+                                        <?php else: ?>
+                                            <a href="login.php" class="btn btn-outline-primary btn-sm px-4 rounded-pill">
+                                                Login to Book
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                Rs. <?= number_format($vehicle['price'],2) ?> <small class="text-muted">/ day</small>
-                            </div>
-                            <?php if (is_user_logged_in()): ?>
-                                <a href="my_bookings.php?vehicle_id=<?= $vehicle['vehicle_id'] ?>" class="btn btn-success w-100">
-                                    <i class="fas fa-calendar-check me-1"></i>Book Now
-                                </a>
-                            <?php else: ?>
-                                <a href="login.php" class="btn btn-outline-success w-100">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Login to Book
-                                </a>
-                            <?php endif; ?>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center py-5">
+                        <div class="glass p-5 rounded-4">
+                            <i class="fas fa-bicycle fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No bicycles found</h4>
+                            <p class="text-muted mb-0">Try adjusting your filters to find your perfect ride.</p>
                         </div>
                     </div>
-                </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <div class="col-12 text-center">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>No bicycles available at the moment.
-                </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
-</div>
+    </div>
 
-<?php include 'includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>
 </body>
+
 </html>
