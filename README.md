@@ -1,139 +1,141 @@
-# Car Rental System
+Swift Ride – Vehicle Rental System
 
-A modern and user-friendly car rental management system built with PHP and MySQL. Designed and developed by Ayush Ghimire.
+A modern and user-friendly vehicle rental management system built with PHP and MySQL. Designed and developed by Team Swift-Ride, this system simplifies car rental management for both customers and administrators.
 
-![Car Rental System](assets/img/cars/default-car.jpg)
+About
 
-## About
+Swift Ride is a comprehensive web application providing an intuitive platform to manage car rentals efficiently. Customers can browse, book, and manage rentals, while administrators can handle inventory, bookings, and user management through a secure dashboard.
 
-This Car Rental System is a comprehensive web application that provides an easy-to-use platform for both customers and administrators to manage car rentals efficiently. With a clean and intuitive interface, it simplifies the process of car booking and rental management.
+Features
 
-## Features
+User Features:
 
-- **User Features:**
-  - User Registration and Login
-  - Browse Available Cars
-  - Book Cars
-  - View Booking History
-  - Update Profile
-  - Contact Form
+User registration and login
 
-- **Admin Features:**
-  - Secure Admin Login
-  - Dashboard with Statistics
-  - Manage Cars (Add, Edit, Delete)
-  - Manage Bookings
-  - User Management
-  - Enquiries Management
+Browse available cars
 
-## Screenshots
+Book cars
 
-### User Interface
-- **Home Page**: Browse available cars and featured vehicles
-- **Car Listings**: View detailed car information and pricing
-- **Booking System**: Easy-to-use booking interface
-- **User Profile**: Manage personal information and booking history
+View booking history
 
-### Admin Interface
-- **Dashboard**: Overview of bookings, users, and revenue
-- **Car Management**: Add, edit, and manage car inventory
-- **Booking Management**: Track and manage all bookings
-- **User Management**: Manage user accounts and permissions
+Update profile
 
-## Requirements
+Contact form
 
-- PHP 7.4 or higher
-- MySQL 5.7 or higher
-- Apache Web Server
-- XAMPP/WAMP/LAMP stack
+Admin Features:
 
-## Installation
+Secure admin login
 
-1. Clone the repository to your web server directory:
-   ```bash
-   git clone https://github.com/yourusername/carrentalphp.git
-   ```
+Dashboard with statistics
 
-2. Create a new MySQL database named 'carrentalp'
+Manage cars (add, edit, delete)
 
-3. Import the database:
-   - Open phpMyAdmin
-   - Select the 'carrentalp' database
-   - Go to Import tab
-   - Select the file 'DATABASE FILE/new_carrentalp.sql'
-   - Click 'Go' to import the database structure and initial data
+Manage bookings
 
-4. Configure database connection:
-   - Open `includes/config.php`
-   - Update the database credentials if needed:
-     ```php
-     $servername = "localhost";
-     $username = "root";
-     $password = "";
-     $dbname = "carrentalp";
-     ```
+User management
 
-5. Access the system:
-   - User Interface: `http://localhost/carrentalphp`
-   - Admin Interface: `http://localhost/carrentalphp/admin`
+Enquiries management
 
-## Default Admin Credentials
+Screenshots
 
-- Username: admin
-- Password: admin123
+User Interface
 
-## Directory Structure
+Home page with featured vehicles
 
-```
+Car listings with details and pricing
+
+Easy-to-use booking system
+
+User profile management
+
+Admin Interface
+
+Dashboard overview: bookings, users, revenue
+
+Car management interface
+
+Booking tracking and management
+
+User account management
+
+Requirements
+
+PHP 7.4 or higher
+
+MySQL 5.7 or higher
+
+Apache Web Server
+
+XAMPP / WAMP / LAMP stack
+
+Installation
+
+Clone the repository:
+
+git clone https://github.com/yourusername/carrentalphp.git
+
+
+Create a MySQL database named carrentalp.
+
+Import the database from:
+DATABASE FILE/new_carrentalp.sql
+
+Update database credentials in includes/config.php.
+
+Access the system:
+
+User: http://localhost/carrentalphp
+
+Admin: http://localhost/carrentalphp/admin
+
+Default Admin Credentials:
+
+Username: 
+
+Password: 
+
+Tech Stack
+
+Frontend: HTML5, CSS3, JavaScript, Bootstrap
+
+Backend: PHP 7.4+
+
+Database: MySQL 5.7+
+
+Server: Apache
+
+Libraries: Font Awesome, jQuery, Bootstrap
+
+Security
+
+Password hashing with password_hash()
+
+SQL injection prevention
+
+XSS & CSRF protection
+
+Input validation and sanitization
+
+Secure session management
+
+Directory Structure
 carrentalphp/
 ├── admin/              # Admin panel files
-├── assets/            # CSS, JS, and image files
-├── DATABASE FILE/     # Database setup file
-├── includes/          # PHP includes (config, functions)
-└── uploads/           # Car image uploads
-```
+├── assets/             # CSS, JS, and image files
+├── DATABASE FILE/      # Database setup file
+├── includes/           # PHP includes (config, functions)
+└── uploads/            # Vehicle image uploads
 
-## Tech Stack
+Contributing
 
-- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap
-- **Backend**: PHP 7.4+
-- **Database**: MySQL 5.7+
-- **Server**: Apache
-- **Additional Libraries**: 
-  - Font Awesome (Icons)
-  - jQuery (JavaScript Framework)
-  - Bootstrap (UI Framework)
+We welcome contributions! See Contributing Guidelines
+ for details.
 
-## Security Features
+Author
 
-- Password Hashing using PHP's `password_hash()`
-- SQL Injection Prevention
-- XSS Protection
-- CSRF Protection
-- Input Validation and Sanitization
-- Secure Session Management
+Wanith Nirman – Project Creator & Lead Developer
+GitHub: 
 
-## Support
+License
 
-If you encounter any issues or need assistance, please:
-1. Check the [Issues](https://github.com/ayushghi4/carrentalphp/issues) page
-2. Create a new issue if your problem isn't already listed
-3. Provide detailed information about your problem
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-## Author
-
-**Ayush Ghimire**
-- Project Creator and Lead Developer
-- GitHub: [@ayushghi4](https://github.com/ayushghi4)
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## Acknowledgments
-
-Special thanks to everyone who has contributed to making this project better!
+MIT License – Open source.
