@@ -1,8 +1,18 @@
-/* General Styles */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --dark-color: #1a1a1a;
+    --light-color: #f8f9fa;
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f8f9fa;
+    background-color: #f4f7f6;
     padding-top: 76px;
+    color: #333;
 }
 
 /* Navbar Styles */
@@ -156,7 +166,7 @@ body {
     width: 100%;
 }
 
-.table > :not(:first-child) {
+.table> :not(:first-child) {
     border-top: none;
 }
 
@@ -205,15 +215,15 @@ body {
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .stat-card {
         margin-bottom: 1rem;
     }
-    
+
     .data-card {
         margin: 1rem 0;
     }
-    
+
     .navbar-brand {
         font-size: 1.25rem;
     }
@@ -224,11 +234,11 @@ body {
     margin-bottom: 0;
 }
 
-.table > :not(caption) > * > * {
+.table> :not(caption)>*>* {
     padding: 1rem;
 }
 
-.table > tbody > tr > td {
+.table>tbody>tr>td {
     vertical-align: middle;
 }
 
@@ -287,12 +297,13 @@ body {
     .no-print {
         display: none !important;
     }
-    
+
     .table {
         border: 1px solid #dee2e6;
     }
-    
-    .table td, .table th {
+
+    .table td,
+    .table th {
         border: 1px solid #dee2e6;
     }
 }

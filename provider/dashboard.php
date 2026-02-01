@@ -19,7 +19,7 @@ $conn = Connect();
 
 // Fetch provider stats
 // Total vehicles
-$result = $conn->query("SELECT COUNT(*) AS count FROM vehicles WHERE provider_id = $provider_id");
+$result = $conn->query("SELECT COUNT(*) AS count FROM vehicles WHERE provider_id = $provider_id AND is_deleted = 0");
 $totalVehicles = $result->fetch_assoc()['count'];
 
 // Active bookings
@@ -138,7 +138,7 @@ $feedback_stmt->close();
                 </thead>
                 <tbody>
                     <?php
-                    $stmt = $conn->query("SELECT * FROM vehicles WHERE provider_id = $provider_id");
+                    $stmt = $conn->query("SELECT * FROM vehicles WHERE provider_id = $provider_id AND is_deleted = 0");
                     while ($vehicle = $stmt->fetch_assoc()):
                     ?>
                         <tr>

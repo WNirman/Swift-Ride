@@ -21,63 +21,86 @@ $sql = "SELECT v.vehicle_id, v.vehicle_brand, v.vehicle_model, v.vehicle_year, v
                v.transmission, v.price, p.name AS provider_name
         FROM vehicles v
         JOIN providers p ON v.provider_id = p.provider_id
+        WHERE v.is_deleted = 0
         ORDER BY v.vehicle_type ASC, v.vehicle_brand ASC";
 $result = $conn->query($sql);
 
 include 'includes/header.php';
 ?>
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">All Vehicles</h1>
-        <a href="dashboard.php" class="btn btn-sm btn-secondary">Back to Dashboard</a>
-    </div>
+<div class="main-content">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+            <div>
+                <h2 class="fw-bold m-0 text-primary">All Vehicles</h2>
+                <p class="text-muted mb-0">Manage and oversee your entire fleet</p>
+            </div>
+            <a href="dashboard.php" class="btn btn-outline-secondary rounded-pill px-4 transition-hover">
+                <i class="fas fa-arrow-left me-2"></i> Dashboard
+            </a>
+        </div>
 
-    <?php if ($result && $result->num_rows > 0): ?>
-        <div class="card shadow">
-            <div class="card-body">
+        <?php if ($result && $result->num_rows > 0): ?>
+            <div class="glass rounded-4 shadow-sm border-0 animate-up overflow-hidden" style="animation-delay: 0.1s;">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="text-muted small text-uppercase">
                             <tr>
-                                <th>Vehicle ID</th>
-                                <th>Brand</th>
-                                <th>Model</th>
-                                <th>Year</th>
-                                <th>Seats</th>
-                                <th>Fuel Type</th>
-                                <th>Transmission</th>
-                                <th>Price/Day</th>
-                                <th>Provider</th>
+                                <th class="border-0 px-4">Vehicle ID</th>
+                                <th class="border-0">Vehicle Details</th>
+                                <th class="border-0">Specs</th>
+                                <th class="border-0">Provider</th>
+                                <th class="border-0 text-end px-4">Price/Day</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($vehicle = $result->fetch_assoc()): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($vehicle['vehicle_id']); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['vehicle_brand']); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['vehicle_model']); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['vehicle_year']); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['seats']); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['fuel_type']); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['transmission']); ?></td>
-                                    <td>$<?= number_format($vehicle['price'], 2); ?></td>
-                                    <td><?= htmlspecialchars($vehicle['provider_name']); ?></td>
+                                <tr class="transition-hover">
+                                    <td class="px-4"><span
+                                            class="fw-bold text-muted small">#<?= htmlspecialchars($vehicle['vehicle_id']); ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">
+                                            <?= htmlspecialchars($vehicle['vehicle_brand'] . ' ' . $vehicle['vehicle_model']); ?>
+                                        </div>
+                                        <div class="text-muted small">Year: <?= htmlspecialchars($vehicle['vehicle_year']); ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <span
+                                                class="badge glass text-dark small"><?= htmlspecialchars($vehicle['seats']); ?>
+                                                Seats</span>
+                                            <span
+                                                class="badge glass text-dark small"><?= htmlspecialchars($vehicle['fuel_type']); ?></span>
+                                            <span
+                                                class="badge glass text-dark small"><?= htmlspecialchars($vehicle['transmission']); ?></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-secondary small">
+                                            <?= htmlspecialchars($vehicle['provider_name']); ?>
+                                        </div>
+                                    </td>
+                                    <td class="text-end px-4">
+                                        <span class="fw-bold text-primary">$<?= number_format($vehicle['price'], 2); ?></span>
+                                    </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-    <?php else: ?>
-        <div class="alert alert-info mt-3">
-            <i class="fas fa-info-circle me-2"></i>No vehicles found.
-        </div>
-    <?php endif; ?>
+        <?php else: ?>
+            <div class="glass p-5 rounded-4 text-center animate-up">
+                <i class="fas fa-car-side fa-3x text-muted mb-3 opacity-50"></i>
+                <h5 class="text-muted">No vehicles found in the system.</h5>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
 
-<?php 
+<?php
 $conn->close();
 include 'includes/footer.php';
 ?>

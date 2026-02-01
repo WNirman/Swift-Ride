@@ -40,18 +40,16 @@ $stmt_booking->execute();
 $result_booking = $stmt_booking->get_result();
 $row_booking = $result_booking->fetch_assoc();
 
-if ($row_booking['count'] > 0) {
-    die("Error: Cannot delete vehicle. There are existing bookings for this vehicle.");
-}
-
-// Delete the vehicle
-$sql_delete = "DELETE FROM vehicles WHERE vehicle_id = ? AND provider_id = ?";
+// Perform Soft Delete: Set is_deleted = 1
+$sql_delete = "UPDATE vehicles SET is_deleted = 1, vehicle_availability = 'no' WHERE vehicle_id = ? AND provider_id = ?";
 $stmt_delete = $conn->prepare($sql_delete);
 $stmt_delete->bind_param("ii", $vehicle_id, $provider_id);
 
 if ($stmt_delete->execute()) {
-    // Redirect back to dashboard after successful deletion
-    header("Location: dashboard.php?msg=Vehicle+deleted+successfully");
+    $msg = ($row_booking['count'] > 0)
+        ? "Vehicle archived successfully (permanent records kept due to existing bookings)"
+        : "Vehicle removed successfully";
+    header("Location: dashboard.php?msg=" . urlencode($msg));
     exit;
 } else {
     die("Error: Could not delete vehicle. " . $conn->error);

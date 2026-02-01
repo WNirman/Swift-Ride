@@ -19,7 +19,7 @@ $sql = "
     FROM vehicles v
     LEFT JOIN bookings b ON v.vehicle_id = b.vehicle_id AND b.status='confirmed'
     LEFT JOIN locations l ON v.location_id = l.location_id
-    WHERE v.vehicle_type = ? AND (b.booking_id IS NULL OR DATE_ADD(b.return_date, INTERVAL 1 DAY) < ?)
+    WHERE v.vehicle_type = ? AND v.is_deleted = 0 AND (b.booking_id IS NULL OR DATE_ADD(b.return_date, INTERVAL 1 DAY) < ?)
 ";
 
 $params = [$typeFilter, $today];

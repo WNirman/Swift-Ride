@@ -43,8 +43,16 @@ include 'includes/header.php';
 ?>
 
 <div class="main-content">
-    <div class="container-fluid p-4">
-        <h1 class="h3 mb-4">Manage Bookings</h1>
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+            <div>
+                <h2 class="fw-bold m-0 text-primary">Manage Bookings</h2>
+                <p class="text-muted mb-0">Track and manage all vehicle reservations</p>
+            </div>
+            <a href="dashboard.php" class="btn btn-outline-secondary rounded-pill px-4 transition-hover">
+                <i class="fas fa-arrow-left me-2"></i> Dashboard
+            </a>
+        </div>
 
         <!-- Success/Error Messages -->
         <?php if (isset($_SESSION['success'])): ?>
@@ -61,63 +69,71 @@ include 'includes/header.php';
             </div>
         <?php endif; ?>
 
-        <!-- Search bar -->
-        <div class="mb-3">
-            <input type="text" class="form-control" id="searchBookings" placeholder="Search bookings...">
+        <!-- Search and Filters bar -->
+        <div class="glass p-3 rounded-4 mb-4 animate-up shadow-sm border-0" style="animation-delay: 0.1s;">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0 opacity-50"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control border-0 bg-transparent" id="searchBookings" placeholder="Search by user, vehicle, or ID...">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card shadow">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th>Booking ID</th>
-                                <th>User</th>
-                                <th>Phone</th>
-                                <th>User Bookings</th>
-                                <th>Joined</th>
-                                <th>Vehicle</th>
-                                <th>Provider</th>
-                                <th>Pickup Date</th>
-                                <th>Return Date</th>
-                                <th>Total Cost</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if ($bookings): ?>
-                                <?php foreach ($bookings as $b): ?>
-                                    <?php
-                                        $user_id = $b['user_id'];
-                                        $booking_count = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE user_id = $user_id")->fetch_assoc()['count'];
-                                        $total_cost = calculate_rental_cost($b['vehicle_price'], $b['pickup_date'], $b['return_date']);
-                                    ?>
-                                    <tr>
-                                        <td><?= $b['booking_id']; ?></td>
-                                        <td><?= htmlspecialchars($b['user_name']); ?></td>
-                                        <td><?= htmlspecialchars($b['user_phone']); ?></td>
-                                        <td><span class="badge bg-info"><?= $booking_count ?> bookings</span></td>
-                                        <td><?= format_date($b['joined_date']); ?></td>
-                                        <td><?= htmlspecialchars($b['vehicle_brand'] . ' ' . $b['vehicle_model'] . ' (' . $b['vehicle_type'] . ')'); ?></td>
-                                        <td><?= htmlspecialchars($b['provider_name']); ?></td>
-                                        <td><?= $b['pickup_date']; ?></td>
-                                        <td><?= $b['return_date']; ?></td>
-                                        <td><?= number_format($total_cost, 2); ?></td>
-                                        <td>
-                                            <span class="badge 
-                                                <?= $b['status']=='pending'?'bg-warning':($b['status']=='confirmed'?'bg-success':($b['status']=='cancelled'?'bg-danger':'bg-info')) ?>">
-                                                <?= ucfirst($b['status']); ?>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr><td colspan="11" class="text-center py-4">No bookings found.</td></tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="glass rounded-4 shadow-sm border-0 animate-up overflow-hidden" style="animation-delay: 0.2s;">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="text-muted small text-uppercase">
+                        <tr>
+                            <th class="border-0 px-4">ID</th>
+                            <th class="border-0">User Info</th>
+                            <th class="border-0">Vehicle Details</th>
+                            <th class="border-0">Duration</th>
+                            <th class="border-0 text-end px-4">Total Amount</th>
+                            <th class="border-0 text-center px-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($bookings): ?>
+                            <?php foreach ($bookings as $b): ?>
+                                <?php
+                                    $user_id = $b['user_id'];
+                                    $booking_count = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE user_id = $user_id")->fetch_assoc()['count'];
+                                    $total_cost = calculate_rental_cost($b['vehicle_price'], $b['pickup_date'], $b['return_date']);
+                                ?>
+                                <tr class="transition-hover">
+                                    <td class="px-4"><span class="fw-bold text-muted small">#<?= $b['booking_id']; ?></span></td>
+                                    <td>
+                                        <div class="fw-bold"><?= htmlspecialchars($b['user_name'] ?? '-'); ?></div>
+                                        <div class="text-muted small"><?= htmlspecialchars($b['user_phone'] ?? '-'); ?></div>
+                                        <div class="mt-1"><span class="badge glass text-primary" style="font-size: 10px;"><?= $booking_count ?> bookings</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark"><?= htmlspecialchars($b['vehicle_brand'] . ' ' . $b['vehicle_model']); ?></div>
+                                        <div class="text-muted small"><?= htmlspecialchars($b['vehicle_type']); ?></div>
+                                        <div class="text-muted" style="font-size: 10px;">Provider: <?= htmlspecialchars($b['provider_name']); ?></div>
+                                    </td>
+                                    <td>
+                                        <div class="small fw-bold text-dark"><?= format_date($b['pickup_date']); ?></div>
+                                        <div class="text-muted small">to <?= format_date($b['return_date']); ?></div>
+                                    </td>
+                                    <td class="text-end px-4">
+                                        <span class="fw-bold text-dark">Rs. <?= number_format($total_cost, 2); ?></span>
+                                    </td>
+                                    <td class="text-center px-4">
+                                        <span class="badge rounded-pill px-3 py-2 small fw-bold
+                                            <?= $b['status']=='pending'?'bg-warning text-dark':($b['status']=='confirmed'?'bg-primary':($b['status']=='cancelled'?'bg-danger':'bg-success')) ?>">
+                                            <?= ucfirst($b['status']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr><td colspan="6" class="text-center py-5 text-muted">No bookings found.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

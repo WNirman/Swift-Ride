@@ -68,7 +68,7 @@ try {
         $vehicle_types_count = $veh_result->fetch_assoc()['total'];
     }
 
-    
+
 
     // Providers count
     if (in_array('providers', $tables)) {
@@ -85,251 +85,212 @@ try {
 include 'includes/header.php';
 ?>
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Dashboard Overview</h1>
-    </div>
-    
-    <!-- Stats Cards -->
-    <div class="row g-4 mb-4">
+<div class="main-content">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+            <div>
+                <h2 class="fw-bold m-0 text-primary">Admin Dashboard</h2>
+                <p class="text-muted mb-0">Overview of your rental system performance</p>
+            </div>
+            <div class="glass px-4 py-2 rounded-pill">
+                <span class="small text-muted">System Active</span>
+                <span class="ms-2"><i class="fas fa-circle text-success" style="font-size: 8px;"></i></span>
+            </div>
+        </div>
 
-        <!-- Total Vehicles -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card h-100">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <span class="stat-icon">
-                            <i class="fas fa-list fa-2x text-secondary"></i>
-                        </span>
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5 animate-up" style="animation-delay: 0.1s;">
+            <!-- Total Vehicles -->
+            <div class="col-sm-6 col-md-4 col-xl-2-5">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 transition-hover border-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box-primary sm me-3">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <span class="text-muted small fw-bold">Vehicles</span>
                     </div>
-                    <div class="flex-grow-1 ms-3">
-                        <h3 class="h6 mb-2">Total Vehicles</h3>
-                        <div class="count"><?php echo $vehicle_types_count; ?></div>
-                        <p class="text-muted small mb-0">Defined Types</p>
-                    </div>
+                    <div class="h2 fw-bold mb-1"><?php echo $vehicle_types_count; ?></div>
+                    <div class="text-muted small">Managed Types</div>
+                    <a href="vehicle_types.php" class="stretched-link"></a>
                 </div>
-                <div class="mt-3">
-                    <a href="vehicle_types.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+
+            <!-- Total Providers -->
+            <div class="col-sm-6 col-md-4 col-xl-2-5">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 transition-hover border-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box-primary sm me-3"
+                            style="background: rgba(52, 58, 64, 0.1); color: #343a40;">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <span class="text-muted small fw-bold">Providers</span>
+                    </div>
+                    <div class="h2 fw-bold mb-1"><?php echo $providers_count; ?></div>
+                    <div class="text-muted small">Registered</div>
+                    <a href="../providers.php" class="stretched-link"></a>
+                </div>
+            </div>
+
+            <!-- Total Bookings -->
+            <div class="col-sm-6 col-md-4 col-xl-2-5">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 transition-hover border-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box-primary sm me-3"
+                            style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <span class="text-muted small fw-bold">Bookings</span>
+                    </div>
+                    <div class="h2 fw-bold mb-1"><?php echo $bookings_count; ?></div>
+                    <div class="text-muted small">Successful Rentals</div>
+                    <a href="bookings.php" class="stretched-link"></a>
+                </div>
+            </div>
+
+            <!-- Total Users -->
+            <div class="col-sm-6 col-md-4 col-xl-2-5">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 transition-hover border-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box-primary sm me-3"
+                            style="background: rgba(23, 162, 184, 0.1); color: #17a2b8;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="text-muted small fw-bold">Users</span>
+                    </div>
+                    <div class="h2 fw-bold mb-1"><?php echo $users_count; ?></div>
+                    <div class="text-muted small">Total Members</div>
+                    <a href="users.php" class="stretched-link"></a>
+                </div>
+            </div>
+
+            <!-- Recent Enquiries -->
+            <div class="col-sm-6 col-md-4 col-xl-2-5">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 transition-hover border-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box-primary sm me-3"
+                            style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span class="text-muted small fw-bold">Enquiries</span>
+                    </div>
+                    <div class="h2 fw-bold mb-1"><?php echo $enquiries_count; ?></div>
+                    <div class="text-muted small">Last 30 Days</div>
+                    <a href="enquiries.php" class="stretched-link"></a>
                 </div>
             </div>
         </div>
 
-        <!-- Total Providers -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card h-100">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <span class="stat-icon">
-                            <i class="fas fa-warehouse fa-2x text-dark"></i>
-                        </span>
+        <!-- Recent Data Tables -->
+        <div class="row g-4 mb-5 animate-up" style="animation-delay: 0.2s;">
+            <!-- Recently Added Bookings -->
+            <div class="col-lg-6">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 border-0">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold m-0">Recent Bookings</h5>
+                        <a href="bookings.php" class="btn btn-primary btn-sm rounded-pill px-3">View All</a>
                     </div>
-                    <div class="flex-grow-1 ms-3">
-                        <h3 class="h6 mb-2">Providers</h3>
-                        <div class="count"><?php echo $providers_count; ?></div>
-                        <p class="text-muted small mb-0">Registered</p>
-                    </div>
-                </div>
-                <div class="mt-3">
-                   <a href="../providers.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Bookings -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card h-100">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <span class="stat-icon">
-                            <i class="fas fa-calendar-check fa-2x text-success"></i>
-                        </span>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <h3 class="h6 mb-2">Total Bookings</h3>
-                        <div class="count"><?php echo $bookings_count; ?></div>
-                        <p class="text-muted small mb-0">All Time Bookings</p>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a href="bookings.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Users -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card h-100">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <span class="stat-icon">
-                            <i class="fas fa-users fa-2x text-info"></i>
-                        </span>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <h3 class="h6 mb-2">Total Users</h3>
-                        <div class="count"><?php echo $users_count; ?></div>
-                        <p class="text-muted small mb-0">Registered Users</p>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a href="users.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Enquiries -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card h-100">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <span class="stat-icon">
-                            <i class="fas fa-envelope fa-2x text-warning"></i>
-                        </span>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <h3 class="h6 mb-2">Recent Enquiries</h3>
-                        <div class="count"><?php echo $enquiries_count; ?></div>
-                        <p class="text-muted small mb-0">Last 30 Days</p>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a href="enquiries.php" class="btn btn-sm btn-light">View Details <i class="fas fa-arrow-right ms-1"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Data Tables -->
-    <div class="row g-4">
-        <!-- Recently Added Bookings -->
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header bg-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recently Added Bookings</h5>
-                        <a href="bookings.php" class="btn btn-sm btn-primary">View All</a>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <?php
-                    try {
-                        if (in_array('bookings', $tables)) {
-                            $bk_cols = $conn->query("SHOW COLUMNS FROM bookings");
-                            $bk_columns = array();
-                            while ($col = $bk_cols->fetch_assoc()) {
-                                $bk_columns[] = $col['Field'];
-                            }
-
-                            $order_by = in_array('created_at', $bk_columns) ? 'created_at' : 'id';
-
-                            $recent_bookings = $conn->query("
-                                SELECT b.*, u.username 
-                                FROM bookings b 
-                                LEFT JOIN users u ON b.user_id = u.user_id 
-                                ORDER BY $order_by DESC 
-                                LIMIT 5
-                            ");
-
-                            if ($recent_bookings && $recent_bookings->num_rows > 0) {
-                                echo '<div class="table-responsive">';
-                                echo '<table class="table table-hover mb-0">';
-                                echo '<thead class="table-light">';
-                                echo '<tr>';
-                                echo '<th class="border-0">Booking ID</th>';
-                                echo '<th class="border-0">User</th>';
-                                echo '<th class="border-0">Vehicle</th>';
-                                echo '<th class="border-0">Date</th>';
-                                echo '</tr>';
-                                echo '</thead>';
-                                echo '<tbody>';
-                                while ($booking = $recent_bookings->fetch_assoc()) {
-                                    echo '<tr>';
-                                    echo '<td>' . htmlspecialchars($booking['booking_id']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($booking['username'] ?? '-') . '</td>';
-                                    echo '<td>' . htmlspecialchars($booking['vehicle_name'] ?? '-') . '</td>';
-                                    echo '<td>' . htmlspecialchars($booking['created_at'] ?? '-') . '</td>';
-                                    echo '</tr>';
+                    <div class="table-responsive">
+                        <?php
+                        try {
+                            if (in_array('bookings', $tables)) {
+                                // ... existing logic to fetch columns and bookings ...
+                                $bk_cols = $conn->query("SHOW COLUMNS FROM bookings");
+                                $bk_columns = array();
+                                while ($col = $bk_cols->fetch_assoc()) {
+                                    $bk_columns[] = $col['Field'];
                                 }
-                                echo '</tbody>';
-                                echo '</table>';
-                                echo '</div>';
-                            } else {
-                                echo '<div class="text-center py-4">';
-                                echo '<p class="text-muted mb-0">No bookings added yet</p>';
-                                echo '</div>';
-                            }
-                        } else {
-                            echo '<div class="text-center py-4">';
-                            echo '<p class="text-muted mb-0">Bookings table not found</p>';
-                            echo '</div>';
-                        }
-                    } catch (Exception $e) {
-                        echo '<div class="text-center py-4">';
-                        echo '<p class="text-danger mb-0">Error loading bookings</p>';
-                        echo '</div>';
-                        error_log("Error loading bookings: " . $e->getMessage());
-                    }
-                    ?>
-                </div>
-            </div>
-        </div>
+                                $order_by = in_array('created_at', $bk_columns) ? 'created_at' : 'id';
+                                $recent_bookings = $conn->query("SELECT b.*, u.username FROM bookings b LEFT JOIN users u ON b.user_id = u.user_id ORDER BY $order_by DESC LIMIT 5");
 
-        <!-- Recently Added Providers -->
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header bg-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recently Added Providers</h5>
-                        <a href="providers.php" class="btn btn-sm btn-primary">View All</a>
+                                if ($recent_bookings && $recent_bookings->num_rows > 0) {
+                                    echo '<table class="table table-hover align-middle mb-0">';
+                                    echo '<thead class="text-muted small text-uppercase"><tr><th class="border-0">ID</th><th class="border-0">User</th><th class="border-0">Vehicle</th><th class="border-0">Date</th></tr></thead>';
+                                    echo '<tbody>';
+                                    while ($booking = $recent_bookings->fetch_assoc()) {
+                                        echo '<tr>';
+                                        echo '<td class="fw-bold text-muted small">#' . htmlspecialchars($booking['booking_id']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($booking['username'] ?? '-') . '</td>';
+                                        echo '<td>' . htmlspecialchars($booking['vehicle_name'] ?? '-') . '</td>';
+                                        echo '<td><span class="text-muted" style="font-size: 12px;">' . htmlspecialchars($booking['created_at'] ?? '-') . '</span></td>';
+                                        echo '</td>';
+                                    }
+                                    echo '</tbody></table>';
+                                } else {
+                                    echo '<div class="text-center py-4"><p class="text-muted mb-0">No bookings yet</p></div>';
+                                }
+                            }
+                        } catch (Exception $e) {
+                            echo '<p class="text-danger">Error loading data</p>';
+                        }
+                        ?>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <?php
-                    try {
-                        if (in_array('providers', $tables)) {
-                            $recent_providers = $conn->query("SELECT * FROM providers ORDER BY created_at DESC LIMIT 5");
-                            if ($recent_providers && $recent_providers->num_rows > 0) {
-                                echo '<div class="table-responsive">';
-                                echo '<table class="table table-hover mb-0">';
-                                echo '<thead class="table-light">';
-                                echo '<tr>';
-                                echo '<th class="border-0">Name</th>';
-                                echo '<th class="border-0">Email</th>';
-                                echo '<th class="border-0">Phone</th>';
-                                echo '</tr>';
-                                echo '</thead>';
-                                echo '<tbody>';
-                                while ($row = $recent_providers->fetch_assoc()) {
-                                    echo '<tr>';
-                                    echo '<td>' . htmlspecialchars($row['name']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['email'] ?? '-') . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['phone'] ?? '-') . '</td>';
-                                    echo '</tr>';
+            </div>
+
+            <!-- Recently Added Providers -->
+            <div class="col-lg-6">
+                <div class="glass p-4 rounded-4 shadow-sm h-100 border-0">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold m-0">Recent Providers</h5>
+                        <a href="providers.php" class="btn btn-primary btn-sm rounded-pill px-3">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <?php
+                        try {
+                            if (in_array('providers', $tables)) {
+                                $recent_providers = $conn->query("SELECT * FROM providers ORDER BY created_at DESC LIMIT 5");
+                                if ($recent_providers && $recent_providers->num_rows > 0) {
+                                    echo '<table class="table table-hover align-middle mb-0">';
+                                    echo '<thead class="text-muted small text-uppercase"><tr><th class="border-0">Name</th><th class="border-0">Email</th><th class="border-0">Joined</th></tr></thead>';
+                                    echo '<tbody>';
+                                    while ($row = $recent_providers->fetch_assoc()) {
+                                        echo '<tr>';
+                                        echo '<td class="fw-bold">' . htmlspecialchars($row['name']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['email'] ?? '-') . '</td>';
+                                        echo '<td><span class="text-muted" style="font-size: 12px;">' . htmlspecialchars($row['created_at'] ?? '-') . '</span></td>';
+                                        echo '</tr>';
+                                    }
+                                    echo '</tbody></table>';
+                                } else {
+                                    echo '<div class="text-center py-4"><p class="text-muted mb-0">No providers yet</p></div>';
                                 }
-                                echo '</tbody>';
-                                echo '</table>';
-                                echo '</div>';
-                            } else {
-                                echo '<div class="text-center py-4">';
-                                echo '<p class="text-muted mb-0">No providers added yet</p>';
-                                echo '</div>';
                             }
+                        } catch (Exception $e) {
+                            echo '<p class="text-danger">Error loading data</p>';
                         }
-                    } catch (Exception $e) {
-                        echo '<div class="text-center py-4">';
-                        echo '<p class="text-danger mb-0">Error loading providers</p>';
-                        echo '</div>';
-                        error_log("Error loading providers: " . $e->getMessage());
-                    }
-                    ?>
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<?php 
+<style>
+    .icon-box-primary.sm {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+    }
+
+    .col-xl-2-5 {
+        width: 20%;
+    }
+
+    @media (max-width: 1200px) {
+        .col-xl-2-5 {
+            width: 33.33%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .col-xl-2-5 {
+            width: 100%;
+        }
+    }
+</style>
+
+<?php
 $conn->close();
-include 'includes/footer.php'; 
+include 'includes/footer.php';
 ?>
