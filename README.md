@@ -28,139 +28,18 @@ Developed as a comprehensive solution for automotive rentals, Swift Ride combine
 
 ## Database Structure
 
-The system uses a relational database architecture with the following table structures:
+The system uses a relational database named `carrentalp` with the following key tables:
 
-### Core Tables
-
-#### Table: users
-Manages customer account information.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| user_id | int(11) | NO | auto_increment |
-| username | varchar(50) | NO | |
-| password | varchar(255) | NO | |
-| name | varchar(100) | NO | |
-| email | varchar(100) | NO | |
-| phone | varchar(20) | NO | |
-| created_at | timestamp | NO | |
-
-#### Table: providers
-Stores information for vehicle owners/providers.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| provider_id | int(11) | NO | auto_increment |
-| username | varchar(50) | NO | |
-| password | varchar(255) | NO | |
-| name | varchar(100) | NO | |
-| email | varchar(100) | YES | |
-| phone | varchar(20) | YES | |
-| created_at | timestamp | NO | |
-| total_earnings | decimal(10,2) | NO | |
-
-#### Table: vehicles
-Comprehensive inventory of all available vehicles.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| vehicle_id | int(11) | NO | auto_increment |
-| provider_id | int(11) | NO | |
-| location_id | int(11) | NO | |
-| vehicle_type | varchar(50) | NO | |
-| vehicle_brand | varchar(100) | NO | |
-| vehicle_model | varchar(200) | NO | |
-| vehicle_year | int(11) | NO | |
-| seats | int(11) | NO | |
-| fuel_type | varchar(50) | NO | |
-| transmission | varchar(50) | NO | |
-| price | decimal(10,2) | NO | |
-| vehicle_availability | enum('yes','no') | NO | |
-| vehicle_image | varchar(255) | YES | |
-| avg_rating | decimal(3,2) | NO | |
-| is_deleted | tinyint(1) | YES | |
-
-### Operations and Logistics
-
-#### Table: bookings
-Handles vehicle reservations and status tracking.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| booking_id | int(11) | NO | auto_increment |
-| user_id | int(11) | NO | |
-| vehicle_id | int(11) | NO | |
-| pickup_date | date | NO | |
-| return_date | date | NO | |
-| pickup_location | varchar(255) | NO | |
-| dropoff_location | varchar(255) | NO | |
-| total_amount | decimal(10,2) | NO | |
-| booking_date | datetime | NO | |
-| created_at | timestamp | NO | |
-| status | enum('pending','confirmed','cancelled','completed') | NO | |
-| feedback_given | enum('yes','no') | NO | |
-
-#### Table: payments
-Tracks financial transactions related to bookings.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| payment_id | int(11) | NO | auto_increment |
-| booking_id | int(11) | NO | |
-| amount | decimal(10,2) | NO | |
-| method | varchar(100) | NO | |
-| status | enum('pending','confirmed','cancelled') | NO | |
-
-#### Table: locations
-Defines the various service branches and cities.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| location_id | int(11) | NO | auto_increment |
-| city | varchar(100) | NO | |
-| branch | varchar(200) | NO | |
-
-### Communication and Feedback
-
-#### Table: reviews
-Detailed vehicle reviews provided by users.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| review_id | int(11) | NO | auto_increment |
-| booking_id | int(11) | YES | |
-| vehicle_id | int(11) | NO | |
-| user_id | int(11) | NO | |
-| rating | int(11) | YES | |
-| comment | varchar(500) | YES | |
-
-#### Table: feedbacks
-General system and service feedback.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| feedback_id | int(11) | NO | auto_increment |
-| booking_id | int(11) | NO | |
-| user_id | int(11) | NO | |
-| rating | int(11) | NO | |
-| comment | text | NO | |
-| created_at | timestamp | NO | |
-
-#### Table: enquiries
-Manages communication via the contact system.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| id | int(11) | NO | auto_increment |
-| name | varchar(100) | NO | |
-| email | varchar(100) | NO | |
-| subject | varchar(200) | NO | |
-| message | text | NO | |
-| created_at | timestamp | NO | |
-
-#### Table: admins
-System administration and management accounts.
-| Column | Type | Null | Extra |
-| --- | --- | --- | --- |
-| admin_id | int(11) | NO | auto_increment |
-| username | varchar(50) | NO | |
-| password | varchar(255) | NO | |
-| name | varchar(100) | NO | |
-| email | varchar(100) | NO | |
-| phone | varchar(20) | NO | |
-| role | enum('superadmin','manager') | YES | |
-| created_at | timestamp | NO | |
+- **admins**: System administration and management accounts.
+- **bookings**: Handles vehicle reservations and status tracking.
+- **enquiries**: Manages communication via the contact system.
+- **feedbacks**: General system and service feedback.
+- **locations**: Defines the various service branches and cities.
+- **payments**: Tracks financial transactions related to bookings.
+- **providers**: Stores information for vehicle owners/providers.
+- **reviews**: Detailed vehicle reviews provided by users.
+- **users**: Manages customer account information.
+- **vehicles**: Comprehensive inventory of all available vehicles.
 
 ## Technology Stack
 
